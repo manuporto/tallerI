@@ -1,3 +1,6 @@
+.color_doded
+*.py
+*.pyc
 # Object files
 *.o
 *.ko

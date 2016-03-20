@@ -1,6 +1,7 @@
 .color_coded
 *.py
 *.pyc
+*.swp
 # Object files
 *.o
 *.ko

@@ -1,11 +1,9 @@
 #include<stdio.h>
 #include<string.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
 
 #include "socket_api.h"
 
-int main() {
+void cliente() {
     sktinfo_t skt;
 
     socket_init(&skt, "127.0.0.1", "8080");
@@ -13,7 +11,7 @@ int main() {
     char server_reply[256];
     socket_receive(&skt, server_reply, 256);
     puts(server_reply);
-    char msg[] = "Cliente\n";
+    char msg[] = "Cliente";
     socket_send(&skt, msg, strlen(msg));  
     socket_destroy(&skt);
     /*
@@ -57,5 +55,4 @@ int main() {
     puts("Received reply!\n");
     puts(server_reply);
     */   
-    return 0;
 }

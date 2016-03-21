@@ -10,7 +10,14 @@
 #include<netdb.h>
 #include<unistd.h>
 
-int socket_init(int *self, char *hostname, char *port, struct addrinfo *res) {
+#include "socket_api.h"
+
+/*typedef struct sktinfo{
+    int fd; // Socket file descriptor
+    struct addrinfo *res; // Address info
+} sktinfo_t; */
+
+int socket_init(sktinfo_t *self, char *hostname, char *port) {
     int status;
     struct addrinfo hints;
 
@@ -20,9 +27,9 @@ int socket_init(int *self, char *hostname, char *port, struct addrinfo *res) {
 
     if (strcmp(hostname,"") == 0) {
         hints.ai_flags = AI_PASSIVE;
-        status = getaddrinfo(NULL, port, &hints, &res);
+        status = getaddrinfo(NULL, port, &hints, &self->res);
     } else {
-        status = getaddrinfo(hostname, port, &hints, &res);
+        status = getaddrinfo(hostname, port, &hints, &self->res);
     }
 
     if (status != 0) {
@@ -30,69 +37,70 @@ int socket_init(int *self, char *hostname, char *port, struct addrinfo *res) {
         return 1;      
     }
     
-    *self = socket(res->ai_family, res->ai_socktype, res->ai_protocol); 
-    if (*self == -1) {
+    self->fd = socket(self->res->ai_family, self->res->ai_socktype, 
+            self->res->ai_protocol); 
+    if (self->fd == -1) {
         printf("Error: %s\n", strerror(errno));
-        freeaddrinfo(res);
+        freeaddrinfo(self->res);
         return 1;
     }
 
     return 0;
 };
 
-int socket_bind(int *self, struct addrinfo *res) {
-    int status = bind(*self, res->ai_addr, res->ai_addrlen);
+int socket_bind(sktinfo_t *self) {
+    int status = bind(self->fd, self->res->ai_addr, self->res->ai_addrlen);
     if (status == -1) {
         printf("Error: %s\n", strerror(errno));
-        close(*self);
-        freeaddrinfo(res);
+        close(self->fd);
+        freeaddrinfo(self->res);
         return 1;
     }
 
-    freeaddrinfo(res);
+    freeaddrinfo(self->res);
     return 0;
 }
 
-int socket_connect(int *self, struct addrinfo *res) {
-    int status = connect(*self, res->ai_addr, res->ai_addrlen);
+int socket_connect(sktinfo_t *self) {
+    int status = connect(self->fd, self->res->ai_addr, self->res->ai_addrlen);
     if (status == -1) {
         printf("Error: %s\n", strerror(errno));
-        close(*self);
-        freeaddrinfo(res);
+        close(self->fd);
+        freeaddrinfo(self->res);
         return 1;
     }
     
-    freeaddrinfo(res);
+    freeaddrinfo(self->res);
     return 0;
 }
 
-int socket_listen(int *self, int backlog) {
-    int status = listen(*self, backlog);
+int socket_listen(sktinfo_t *self, int backlog) {
+    int status = listen(self->fd, backlog);
     if (status == -1) {
         printf("Error: %s\n", strerror(errno));
-        close(*self);
+        close(self->fd);
         return 1;
     }
 
     return 0;
 }
 
-int socket_accept(int *self, int *peerskt) {
-    *peerskt = accept(*self, NULL, NULL);
-    if (*peerskt == -1) {
+int socket_accept(sktinfo_t *self, sktinfo_t *peerskt) {
+    peerskt->fd = accept(self->fd, NULL, NULL);
+    if (peerskt->fd == -1) {
         printf("Error: %s\n", strerror(errno));
-        close(*self);
+        close(self->fd);
         return 1;
     }
 
     return 0;
 }
 
-int socket_send(int *self, char *msg, int size);
+int socket_send(sktinfo_t *self, char *msg, int size);
 
-int socket_receive(int *self, char *buf, int size);
+int socket_receive(sktinfo_t *self, char *buf, int size);
 
-void socket_destroy(int *self) {
-    shutdown(*self, SHUT_RDWR);
-    close(*self);
+void socket_destroy(sktinfo_t *self) {
+    shutdown(self->fd, SHUT_RDWR);
+    close(self->fd);
 }

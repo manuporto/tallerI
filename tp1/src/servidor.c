@@ -16,7 +16,7 @@
 int main() {
     sktinfo_t skt;
 
-    socket_init(&skt, "", "8080");
+    socket_init(&skt, NULL, "8080");
 
     socket_bind(&skt);
     socket_listen(&skt, 10);
@@ -26,11 +26,14 @@ int main() {
     socket_accept(&skt, &peerskt); 
 
     char msg[] = "Connection made";
-    int len, bytes_send;
+    int len;
 
     len = strlen(msg);
-    bytes_send = send(peerskt.fd, msg, len, 0);
+    socket_send(&peerskt, msg, len);
 
+    char client_reply[256];
+    socket_receive(&peerskt, client_reply, 256);
+    puts(client_reply);
     socket_destroy(&skt);
     socket_destroy(&peerskt);
 }

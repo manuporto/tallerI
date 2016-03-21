@@ -21,7 +21,7 @@ typedef struct sktinfo {
 void socket_destroy(sktinfo_t *self);
 int socket_receive(sktinfo_t *self,char *buf,int size);
 int socket_send(sktinfo_t *self,char *msg,int size);
-int socket_accept(sktinfo_t *self,sktinfo_t *peerskt);
+int socket_accept(sktinfo_t *self);
 int socket_listen(sktinfo_t *self,int backlog);
 int socket_connect(sktinfo_t *self);
 int socket_bind(sktinfo_t *self);

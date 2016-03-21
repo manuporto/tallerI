@@ -44,7 +44,7 @@ int socket_init(sktinfo_t *self, char *hostname, char *port) {
     }
 
     return 0;
-};
+}
 
 int socket_bind(sktinfo_t *self) {
     int status = bind(self->fd, self->res->ai_addr, self->res->ai_addrlen);
@@ -83,14 +83,17 @@ int socket_listen(sktinfo_t *self, int backlog) {
     return 0;
 }
 
-int socket_accept(sktinfo_t *self, sktinfo_t *peerskt) {
-    peerskt->fd = accept(self->fd, NULL, NULL);
-    if (peerskt->fd == -1) {
+int socket_accept(sktinfo_t *self) {
+    int tempskt = accept(self->fd, NULL, NULL);
+    
+    if (tempskt == -1) {
         printf("Error: %s\n", strerror(errno));
         close(self->fd);
         return 1;
     }
-
+    dup2(tempskt, self->fd); 
+    close(self->fd);
+    self->fd = tempskt;
     return 0;
 }
 

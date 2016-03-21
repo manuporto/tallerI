@@ -25,13 +25,11 @@ int socket_init(sktinfo_t *self, char *hostname, char *port) {
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
-    if (strcmp(hostname,"") == 0) {
+    if (!hostname) {
         hints.ai_flags = AI_PASSIVE;
-        status = getaddrinfo(NULL, port, &hints, &self->res);
-    } else {
-        status = getaddrinfo(hostname, port, &hints, &self->res);
     }
 
+    status = getaddrinfo(hostname, port, &hints, &self->res);
     if (status != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
         return 1;      
@@ -96,9 +94,15 @@ int socket_accept(sktinfo_t *self, sktinfo_t *peerskt) {
     return 0;
 }
 
-int socket_send(sktinfo_t *self, char *msg, int size);
+int socket_send(sktinfo_t *self, char *msg, int len) {
+    send(self->fd, msg, len, 0);
+    return 0;
+}
 
-int socket_receive(sktinfo_t *self, char *buf, int size);
+int socket_receive(sktinfo_t *self, char *buf, int len) {
+    recv(self->fd, buf, len, 0);
+    return 0;
+}
 
 void socket_destroy(sktinfo_t *self) {
     shutdown(self->fd, SHUT_RDWR);

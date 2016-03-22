@@ -3,10 +3,10 @@
 
 #include "socket_api.h"
 
-void servidor() {
+void servidor(char *port) {
     sktinfo_t skt;
 
-    socket_init(&skt, NULL, "8080");
+    socket_init(&skt, NULL, port);
 
     socket_bind(&skt);
     socket_listen(&skt, 10);

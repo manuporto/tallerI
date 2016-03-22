@@ -3,10 +3,11 @@
 
 #include "socket_api.h"
 
-void cliente() {
+void cliente(char *hostname, char *port, char *old_local_file, 
+        char *new_local_file, char *new_remote_file, int block_size) {
     sktinfo_t skt;
 
-    socket_init(&skt, "127.0.0.1", "8080");
+    socket_init(&skt, hostname, port);
     socket_connect(&skt);
     char server_reply[256];
     socket_receive(&skt, server_reply, 256);

@@ -19,12 +19,12 @@ typedef struct sktinfo {
 } sktinfo_t;
 
 void socket_destroy(sktinfo_t *self);
-int socket_receive(sktinfo_t *self,char *buf,int size);
-int socket_send(sktinfo_t *self,char *msg,int size);
+int socket_receive(sktinfo_t *self, void *buf,int size);
+int socket_send(sktinfo_t *self, void *msg,int size);
 int socket_accept(sktinfo_t *self);
-int socket_listen(sktinfo_t *self,int backlog);
+int socket_listen(sktinfo_t *self, int backlog);
 int socket_connect(sktinfo_t *self);
 int socket_bind(sktinfo_t *self);
-int socket_init(sktinfo_t *self,char *hostname,char *port);
+int socket_init(sktinfo_t *self, char *hostname, char *port);
 
 #endif

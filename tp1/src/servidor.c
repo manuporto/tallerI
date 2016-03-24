@@ -20,8 +20,12 @@ void servidor(char *port) {
     len = strlen(msg);
     socket_send(&skt, msg, len);
 
-    char client_reply[256];
-    socket_receive(&skt, client_reply, 256);
-    puts(client_reply);
+    int client_reply;
+    socket_receive(&skt, &client_reply, sizeof(client_reply));
+    char old_client_file[client_reply];
+    socket_receive(&skt, old_client_file, client_reply);
+    int block_size;
+    socket_receive(&skt, &block_size, sizeof(block_size));
+    printf("%d\n%s\n%d\n", client_reply, old_client_file, block_size);
     socket_destroy(&skt);
 }

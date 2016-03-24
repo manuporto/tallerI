@@ -97,12 +97,12 @@ int socket_accept(sktinfo_t *self) {
     return 0;
 }
 
-int socket_send(sktinfo_t *self, char *msg, int len) {
+int socket_send(sktinfo_t *self, void *msg, int len) {
     send(self->fd, msg, len, 0);
     return 0;
 }
 
-int socket_receive(sktinfo_t *self, char *buf, int len) {
+int socket_receive(sktinfo_t *self, void *buf, int len) {
     recv(self->fd, buf, len, 0);
     return 0;
 }

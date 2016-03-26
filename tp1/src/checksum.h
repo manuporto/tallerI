@@ -13,20 +13,21 @@ int calculate_checksum(char *block, int block_size){
     return lower + higher * M;
 }
 
-void leer_archivo(char *filename, int block_size) {
-    FILE *fp = fopen(filename, "r");
+int process_block(FILE *fp, int block_size) {
     char c[block_size];
-    int checksum, i;
-    while(!feof(fp)) {
-        for(i = 0; i < block_size && !feof(fp); i++) {
-            c[i] = fgetc(fp);
-        }
+    int checksum = -1; 
+    int i;
 
-        if(i == block_size) {
-            checksum = calculate_checksum(c, block_size);
-            printf("check %x\n", checksum); 
-        }
+    for(i = 0; i < block_size && !feof(fp); i++) {
+        c[i] = fgetc(fp);
     }
 
-    fclose(fp);
+    if(i == block_size) {
+        checksum = calculate_checksum(c, block_size);
+    }
+
+    return checksum;
+ 
 }
+
+

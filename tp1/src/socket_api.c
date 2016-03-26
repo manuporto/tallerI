@@ -5,6 +5,7 @@
 #include<errno.h>
 #include<stdio.h>
 #include<string.h>
+#include<stdbool.h>
 #include<sys/socket.h>
 #include<sys/types.h>
 #include<netdb.h>
@@ -16,6 +17,37 @@
     int fd; // Socket file descriptor
     struct addrinfo *res; // Address info
 } sktinfo_t; */
+
+//typedef ssize_t (*recv_send)(int, void *, size_t, int);
+
+static int process_message(int skt_fd, void *buf, int size, int mode) {
+    int status;
+    char *c_buf = (char *) buf;
+    int processed = 0;
+    bool socket_valid = true;
+
+    while (processed < size) {
+        //pos = pos + processed;
+        if (mode == 0){
+            status = send(skt_fd, &c_buf[processed], size - processed, 0); 
+        } else {
+            status = recv(skt_fd, &c_buf[processed], size - processed, 0);
+        }
+
+        if (status <= 0) {
+            socket_valid = false;
+        } else {
+            // In case of no error status represents the bytes sent/received
+            processed += status;
+        }
+    }
+
+    if (socket_valid) {
+        return processed;
+    } else {
+        return -1;
+    }
+}
 
 int socket_init(sktinfo_t *self, char *hostname, char *port) {
     int status;
@@ -97,14 +129,12 @@ int socket_accept(sktinfo_t *self) {
     return 0;
 }
 
-int socket_send(sktinfo_t *self, void *msg, int len) {
-    send(self->fd, msg, len, 0);
-    return 0;
+int socket_send(sktinfo_t *self, void *buf, int size) {
+    return process_message(self->fd, buf, size, 0);
 }
 
-int socket_receive(sktinfo_t *self, void *buf, int len) {
-    recv(self->fd, buf, len, 0);
-    return 0;
+int socket_receive(sktinfo_t *self, void *buf, int size) {
+    return process_message(self->fd, buf, size, 1);
 }
 
 void socket_destroy(sktinfo_t *self) {

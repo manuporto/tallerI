@@ -22,9 +22,18 @@ void array_append(array_t *self, int value) {
     if (self->elements == self->size) {
         array_resize(self, self->size * 2);
     }
-    self->data[self->elements + 1] = value;
+    self->data[self->elements] = value;
     self->elements++;
+}
 
+int array_find(array_t *self, int value) {
+    for (int i = 0; i < self->elements; i++) {
+        if (self->data[i] == value) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 void array_destroy(array_t *self) {
     free(self->data);

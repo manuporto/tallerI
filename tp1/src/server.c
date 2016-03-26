@@ -1,17 +1,25 @@
 #include<limits.h>
 #include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
 
-#include "socket_api.h"
+#include "checksum.h"
 #include "dynamic_array.h"
+#include "socket_api.h"
 
+// Sets filename and block_size
 static void receive_file_info(sktinfo_t *skt, char *filename, 
         int filename_length, int *block_size);
 
+// Receives a checksum array and initializes it with the info of sent by the
+// client
 static void receive_file_data(sktinfo_t *skt, array_t *chksm_array);
 
+// Calculates the checksums of the server local files and compares them with
+// the ones in the checksum array
 static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
         int block_size);
+
 
 void servidor(char *port) {
     sktinfo_t skt;
@@ -44,9 +52,9 @@ static void receive_file_info(sktinfo_t *skt, char *filename,
         int filename_length, int *block_size) {
     //printf("%d\n", filename_length);
     socket_receive(skt, filename, filename_length);
-    //printf("%s\n", server_file);
+    //printf("%s\n", filename);
     socket_receive(skt, block_size, sizeof(*block_size));
-    //printf("%d\n", block_size);
+    //printf("%d\n", *block_size);
 }
 
 static void receive_file_data(sktinfo_t *skt, array_t *chksm_array) {
@@ -55,17 +63,53 @@ static void receive_file_data(sktinfo_t *skt, array_t *chksm_array) {
     socket_receive(skt, &operation, sizeof(operation));
     while (operation == 1) {
         socket_receive(skt, &checksum, sizeof(checksum));
+        //printf("check: %x\n", checksum);
         array_append(chksm_array, checksum);
         socket_receive(skt, &operation, sizeof(operation));
     }
 }
+
 static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
         int block_size) {
-    int a = 0;
-    for(int i = 0; i < chksm_array->elements; i++) {
-        a = chksm_array->data[i];
-        printf("check: %x\n", a);
-    }
+    //FILE *fp = fopen(filename, "r");
+    /*
+    long actual_pos = ftell(fp);
+    //long start_diff = actual_pos;
+    long end_diff = actual_pos;
+     
+    int server_chksm = 0;
+    int client_chksm_pos = -1;
+    int status  = 0;
 
-    return a;
+    while (!feof(fp)) {
+        switch (status) {
+            case 0:
+                server_chksm = process_block(fp, block_size);
+                if (server_chksm >= 0) {
+                    client_chksm_pos = array_find(chksm_array, server_chksm);
+                }
+
+                if (client_chksm_pos == -1) {
+                    end_diff = ftell(fp);
+                    fseek(fp, end_diff - 1, SEEK_SET);
+                    status = 1;
+                } else {
+                    status = 2;
+                }
+                break;
+            case 1:
+                server_chksm = process_block(fp, block_size);
+                break;
+            case 2:
+                actual_pos = ftell(fp);
+                // send diff bytes from file (fp, s_diff, e_diff, a_pos)
+                // send NB (client_chksm_pos)
+                //start_diff = actual_pos;
+                end_diff = actual_pos;
+                break;
+        }
+    }
+    */
+    //fclose(fp);
+    return 0;
 }

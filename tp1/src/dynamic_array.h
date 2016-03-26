@@ -7,7 +7,7 @@ typedef struct array {
 } array_t;
 
 void array_init(array_t *self, size_t size) {
-    self->data = malloc(sizeof(int) * size);
+    self->data = calloc(size, sizeof(int));
     self->size = size;
     self->elements = 0;
 }

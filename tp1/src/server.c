@@ -25,6 +25,10 @@ static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
 // server
 static void send_info_common_bytes(sktinfo_t *skt, int index);
 
+static void send_diff_bytes(sktinfo_t *skt, FILE *fp, long start_diff, 
+        long end_diff, long actual_position);
+ 
+
 void servidor(char *port) {
     sktinfo_t skt;
 
@@ -64,7 +68,7 @@ static void receive_file_data(sktinfo_t *skt, array_t *chksm_array) {
     int checksum, operation;
    
     socket_receive(skt, &operation, sizeof(operation));
-    while (operation == 1) {
+    while (operation == CHKSM_IN) {
         socket_receive(skt, &checksum, sizeof(checksum));
         array_append(chksm_array, checksum);
         socket_receive(skt, &operation, sizeof(operation));
@@ -74,58 +78,66 @@ static void receive_file_data(sktinfo_t *skt, array_t *chksm_array) {
 static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
         int block_size) {
     FILE *fp = fopen(filename, "r");
-    //long actual_pos = ftell(fp);
-    //long start_diff = actual_pos;
-    //long end_diff = actual_pos;
+    long actual_pos = ftell(fp);
+    long start_diff = actual_pos;
+    long end_diff = actual_pos;
      
     int server_chksm = 0;
     int client_chksm_pos = -1;
-    int status  = 0;
-    int a;
+    int status  = 2;
+    int s;
     while (!feof(fp)) {
         switch (status) {
             case 0:
-                server_chksm = process_block(fp, block_size);
-                if (server_chksm >= 0) {
-                    client_chksm_pos = array_find(chksm_array, server_chksm);
-                }
-
-                if (client_chksm_pos == -1) {
-                    printf("BAD ENTRANCE\n");
-                    /*
-                    end_diff = ftell(fp);
-                    fseek(fp, end_diff - 1, SEEK_SET);
-                    status = 1;
-                    */
-                } else {
-                    status = 2;
-                }
+                end_diff = actual_pos - (long) block_size + 1; 
+                fseek(fp, end_diff, SEEK_SET);
                 break;
             case 1:
-                server_chksm = process_block(fp, block_size);
-                break;
-            case 2:
-                //actual_pos = ftell(fp);
-                // send diff bytes from file (fp, s_diff, e_diff, a_pos)
+                send_diff_bytes(skt, fp, start_diff, end_diff, actual_pos);
                 send_info_common_bytes(skt, client_chksm_pos);
-                // send NB (client_chksm_pos)
-                //start_diff = actual_pos;
-                //end_diff = actual_pos;
-                status = 0;
-                printf("sv chksm %x\n", server_chksm);
+                start_diff = actual_pos;
+                end_diff = actual_pos;
                 break;
         }
+        server_chksm = process_block(fp, block_size);
+        actual_pos = ftell(fp);
+        if (server_chksm >= 0) {
+            client_chksm_pos = array_find(chksm_array, server_chksm);
+        }
+
+        if (client_chksm_pos == -1) {
+            status = 0;
+        } else {
+            status = 1;
+        }
     }
-    a = 5;
-    socket_send(skt, &a, sizeof(a));
+    send_diff_bytes(skt, fp, start_diff, actual_pos, actual_pos);
+    s = END_OF_FILE;
+    socket_send(skt, &s, sizeof(s));
     fclose(fp);
     return 0;
 }
 
 static void send_info_common_bytes(sktinfo_t *skt, int index) {
-    //socket_send(skt, "hola", sizeof("hola"));
-    int status = 4;
+    int status = NB_IN;
     socket_send(skt, &status, sizeof(status)); 
     socket_send(skt, &index, sizeof(index));
-    return;
+}
+
+static void send_diff_bytes(sktinfo_t *skt, FILE *fp, long start_diff, 
+        long end_diff, long actual_position) {
+    int status = BYTE_IN;
+    socket_send(skt, &status, sizeof(status));
+    int bufSize = (int) end_diff - start_diff;
+    socket_send(skt, &bufSize, sizeof(bufSize));
+    char buf[bufSize];
+    int i = 0;
+    fseek(fp, start_diff, SEEK_SET);
+    while (ftell(fp) <= end_diff && !feof(fp)) {
+       buf[i] = fgetc(fp); 
+       i++;
+    }
+
+    socket_send(skt, buf, bufSize);
+    fseek(fp, actual_position, SEEK_SET);
 }

@@ -51,14 +51,14 @@ static void process_file(sktinfo_t *skt, char *filename, int block_size) {
         }
     }
     
-    status = 2; //checksum end
+    status = CHKSM_END; 
     socket_send(skt, &status, sizeof(status));
     fclose(fp);
 }
 
 static void send_checksum(sktinfo_t *skt, int checksum) {
-    int checksum_inbound = 1;
-    socket_send(skt, &checksum_inbound, sizeof(checksum_inbound));
+    int s = CHKSM_IN;
+    socket_send(skt, &s, sizeof(s));
     socket_send(skt, &checksum, sizeof(checksum));
 }
 
@@ -66,13 +66,19 @@ static void receive_new_file(sktinfo_t *skt, char *new_local_file,
         char *old_local_file, int block_size) {
     FILE *old_fp = fopen(old_local_file, "r");
     FILE *new_fp = fopen(new_local_file, "w");
-    int status;
+    int status, bufSize;
     socket_receive(skt, &status, sizeof(status));
 
     while (status != END_OF_FILE) {
         switch (status) {
             case NB_IN:
                 write_old_bytes(skt, new_fp, old_fp, block_size);
+                break;
+            case BYTE_IN:
+                socket_receive(skt, &bufSize, sizeof(bufSize));
+                char buf[bufSize];
+                socket_receive(skt, buf, bufSize);
+                fwrite(buf, sizeof(char), bufSize, new_fp);
         }
 
         socket_receive(skt, &status, sizeof(status));
@@ -89,7 +95,7 @@ static void write_old_bytes(sktinfo_t *skt, FILE *new_fp, FILE *old_fp,
     socket_receive(skt, &block_index, sizeof(block_index)); 
     fseek(old_fp, (long) block_index * block_size, SEEK_SET);
 
-    for (int i = 0; i < block_size; i++) {
+    for (int i = 0; i < block_size && !feof(old_fp); i++) {
         c = fgetc(old_fp);        
         fwrite(&c, sizeof(c), sizeof(c), new_fp);
     }

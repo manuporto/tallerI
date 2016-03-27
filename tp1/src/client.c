@@ -66,24 +66,28 @@ static void receive_new_file(sktinfo_t *skt, char *new_local_file,
         char *old_local_file, int block_size) {
     FILE *old_fp = fopen(old_local_file, "r");
     FILE *new_fp = fopen(new_local_file, "w");
-    int status, bufSize;
+    int status, kBufSize;
     socket_receive(skt, &status, sizeof(status));
 
     while (status != END_OF_FILE) {
         switch (status) {
             case NB_IN:
                 write_old_bytes(skt, new_fp, old_fp, block_size);
+                
                 break;
             case BYTE_IN:
-                socket_receive(skt, &bufSize, sizeof(bufSize));
-                char buf[bufSize];
-                socket_receive(skt, buf, bufSize);
-                fwrite(buf, sizeof(char), bufSize, new_fp);
+                socket_receive(skt, &kBufSize, sizeof(kBufSize));
+                char buf[kBufSize];
+                socket_receive(skt, buf, kBufSize);
+                fwrite(buf, sizeof(char), kBufSize, new_fp);
+                printf("RECV File chunk %d bytes\n", kBufSize);
+                break;
         }
 
         socket_receive(skt, &status, sizeof(status));
     }
 
+    printf("RECV End of file\n");
     fclose(old_fp);
     fclose(new_fp);
 }
@@ -101,4 +105,5 @@ static void write_old_bytes(sktinfo_t *skt, FILE *new_fp, FILE *old_fp,
     }
 
     rewind(old_fp);
+    printf("RECV Block index %d\n", block_index);
 }

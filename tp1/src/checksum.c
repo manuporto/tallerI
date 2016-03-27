@@ -20,7 +20,8 @@ int calculate_checksum(char *block, int block_size){
 }
 
 int process_block(FILE *fp, int block_size) {
-    char c[block_size];
+    int kBlock = block_size;
+    char c[kBlock];
     int checksum = -1; 
     int i;
 

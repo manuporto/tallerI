@@ -44,7 +44,8 @@ void servidor(char *port) {
     int filename_length;
     socket_receive(&skt, &filename_length, sizeof(filename_length));   
 
-    char filename[filename_length];
+    int kFileL = filename_length;
+    char filename[kFileL];
     int block_size;
     receive_file_info(&skt, filename, filename_length, &block_size);
     array_t chksm_array;
@@ -126,11 +127,15 @@ static void send_info_common_bytes(sktinfo_t *skt, int index) {
 
 static void send_diff_bytes(sktinfo_t *skt, FILE *fp, long start_diff, 
         long end_diff, long actual_position) {
+    int kBufSize = (int) end_diff - start_diff;
+    if (kBufSize == 0) {
+        return;
+    }
     int status = BYTE_IN;
     socket_send(skt, &status, sizeof(status));
-    int bufSize = (int) end_diff - start_diff;
-    socket_send(skt, &bufSize, sizeof(bufSize));
-    char buf[bufSize];
+    socket_send(skt, &kBufSize, sizeof(kBufSize));
+    int kBuf = kBufSize;
+    char buf[kBuf];
     int i = 0;
     fseek(fp, start_diff, SEEK_SET);
     while (ftell(fp) <= end_diff && !feof(fp)) {
@@ -138,6 +143,6 @@ static void send_diff_bytes(sktinfo_t *skt, FILE *fp, long start_diff,
        i++;
     }
 
-    socket_send(skt, buf, bufSize);
+    socket_send(skt, buf, kBufSize);
     fseek(fp, actual_position, SEEK_SET);
 }

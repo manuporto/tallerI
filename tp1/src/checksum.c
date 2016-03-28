@@ -5,7 +5,7 @@
 
 #include "checksum.h"
 
-int calculate_checksum(char *block, int block_size){
+static int calculate_checksum(char *block, int block_size){
     int lower = 0;
     int higher = 0;
     for (int i = 0; i < block_size; i++) {

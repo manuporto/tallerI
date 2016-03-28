@@ -13,13 +13,6 @@
 
 #include "socket_api.h"
 
-/*typedef struct sktinfo{
-    int fd; // Socket file descriptor
-    struct addrinfo *res; // Address info
-} sktinfo_t; */
-
-//typedef ssize_t (*recv_send)(int, void *, size_t, int);
-
 static int process_message(int skt_fd, void *buf, int size, int mode) {
     int status;
     char *c_buf = (char *) buf;
@@ -64,15 +57,15 @@ int socket_init(sktinfo_t *self, char *hostname, char *port) {
     status = getaddrinfo(hostname, port, &hints, &self->res);
     if (status != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-        return 1;      
+        return -1;      
     }
     
     self->fd = socket(self->res->ai_family, self->res->ai_socktype, 
             self->res->ai_protocol); 
     if (self->fd == -1) {
-        printf("Error: %s\n", strerror(errno));
+        fprintf(stderr, "Error: %s\n", strerror(errno));
         freeaddrinfo(self->res);
-        return 1;
+        return -1;
     }
 
     return 0;
@@ -81,35 +74,33 @@ int socket_init(sktinfo_t *self, char *hostname, char *port) {
 int socket_bind(sktinfo_t *self) {
     int status = bind(self->fd, self->res->ai_addr, self->res->ai_addrlen);
     if (status == -1) {
-        printf("Error: %s\n", strerror(errno));
+        fprintf(stderr, "Error: %s\n", strerror(errno));
         close(self->fd);
         freeaddrinfo(self->res);
-        return 1;
+        return -1;
     }
 
-    freeaddrinfo(self->res);
     return 0;
 }
 
 int socket_connect(sktinfo_t *self) {
     int status = connect(self->fd, self->res->ai_addr, self->res->ai_addrlen);
     if (status == -1) {
-        printf("Error: %s\n", strerror(errno));
+        fprintf(stderr, "Error: %s\n", strerror(errno));
         close(self->fd);
         freeaddrinfo(self->res);
-        return 1;
+        return -1;
     }
     
-    freeaddrinfo(self->res);
     return 0;
 }
 
 int socket_listen(sktinfo_t *self, int backlog) {
     int status = listen(self->fd, backlog);
     if (status == -1) {
-        printf("Error: %s\n", strerror(errno));
+        fprintf(stderr, "Error: %s\n", strerror(errno));
         close(self->fd);
-        return 1;
+        return -1;
     }
 
     return 0;
@@ -119,9 +110,9 @@ int socket_accept(sktinfo_t *self) {
     int tempskt = accept(self->fd, NULL, NULL);
     
     if (tempskt == -1) {
-        printf("Error: %s\n", strerror(errno));
+        fprintf(stderr, "Error: %s\n", strerror(errno));
         close(self->fd);
-        return 1;
+        return -1;
     }
     dup2(tempskt, self->fd); 
     close(self->fd);
@@ -138,6 +129,7 @@ int socket_receive(sktinfo_t *self, void *buf, int size) {
 }
 
 void socket_destroy(sktinfo_t *self) {
+    freeaddrinfo(self->res);
     shutdown(self->fd, SHUT_RDWR);
     close(self->fd);
 }

@@ -8,6 +8,11 @@
 #include "protocol.h"
 #include "socket_api.h"
 
+
+/*---------------------------------------------------------------------------
+ *  FUNCTION DECLARATION
+ *---------------------------------------------------------------------------*/
+
 // Sets filename and block_size
 static void receive_file_info(sktinfo_t *skt, char *filename, 
         int filename_length, int *block_size);
@@ -29,21 +34,20 @@ static void send_diff_bytes(sktinfo_t *skt, FILE *fp, long start_diff,
         long end_diff, long actual_position);
  
 
-void servidor(char *port) {
+/*---------------------------------------------------------------------------
+ *  FUNCTION DEFINITION
+ *---------------------------------------------------------------------------*/
+void server(char *port) {
     sktinfo_t skt;
 
     socket_init(&skt, NULL, port);
-
     socket_bind(&skt);
     socket_listen(&skt, 10);
-    
-    // accept incoming connections
     socket_accept(&skt); 
     
 
     int filename_length;
     socket_receive(&skt, &filename_length, sizeof(filename_length));   
-
     int kFileL = filename_length;
     char filename[kFileL];
     int block_size;
@@ -52,17 +56,15 @@ void servidor(char *port) {
     array_init(&chksm_array, 10);
     receive_file_data(&skt, &chksm_array);
     compare_files(&skt, filename, &chksm_array, block_size);
+
     array_destroy(&chksm_array);
     socket_destroy(&skt);
 }
 
 static void receive_file_info(sktinfo_t *skt, char *filename, 
         int filename_length, int *block_size) {
-    //printf("%d\n", filename_length);
     socket_receive(skt, filename, filename_length);
-    //printf("%s\n", filename);
     socket_receive(skt, block_size, sizeof(*block_size));
-    //printf("%d\n", *block_size);
 }
 
 static void receive_file_data(sktinfo_t *skt, array_t *chksm_array) {

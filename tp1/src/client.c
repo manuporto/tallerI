@@ -7,6 +7,15 @@
 #include "protocol.h"
 
 
+/*---------------------------------------------------------------------------
+ *  FUNCTION DECLARATION
+ *---------------------------------------------------------------------------*/
+
+static void send_file_info(sktinfo_t *skt, char *new_remote_file, 
+        int block_size);
+ 
+static void process_file(sktinfo_t *skt, char *filename, int block_size);
+
 static void process_file(sktinfo_t *skt, char *filename, int block_size);
 
 static void send_file_info(sktinfo_t *skt, char *new_remote_file, 
@@ -22,7 +31,10 @@ static void write_old_bytes(sktinfo_t *skt, FILE *new_fp, FILE *old_fp,
         int block_size);
 
 
-void cliente(char *hostname, char *port, char *old_local_file, 
+/*---------------------------------------------------------------------------
+ *  FUNCTION DEFINITION
+ *---------------------------------------------------------------------------*/
+void client(char *hostname, char *port, char *old_local_file, 
         char *new_local_file, char *new_remote_file, int block_size) {
     sktinfo_t skt;
     socket_init(&skt, hostname, port);

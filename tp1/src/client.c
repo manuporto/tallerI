@@ -16,11 +16,6 @@ static void send_file_info(sktinfo_t *skt, char *new_remote_file,
  
 static void process_file(sktinfo_t *skt, char *filename, int block_size);
 
-static void process_file(sktinfo_t *skt, char *filename, int block_size);
-
-static void send_file_info(sktinfo_t *skt, char *new_remote_file, 
-        int block_size);
-
 static void send_checksum(sktinfo_t *skt, int checksum);
 
 // Receives new bytes and index of the bytes that both files share.

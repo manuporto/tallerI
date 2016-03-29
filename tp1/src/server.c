@@ -23,7 +23,7 @@ static void receive_file_data(sktinfo_t *skt, array_t *chksm_array);
 
 // Calculates the checksums of the server local files and compares them with
 // the ones in the checksum array
-static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
+static void compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
         int block_size);
 
 // Sends the index of the checksum of the common bytes between client and
@@ -78,7 +78,7 @@ static void receive_file_data(sktinfo_t *skt, array_t *chksm_array) {
     }
 }
 
-static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
+static void compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
         int block_size) {
     FILE *fp = fopen(filename, "r");
     long actual_pos = ftell(fp);
@@ -118,7 +118,6 @@ static int compare_files(sktinfo_t *skt, char *filename, array_t *chksm_array,
     s = END_OF_FILE;
     socket_send(skt, &s, sizeof(s));
     fclose(fp);
-    return 0;
 }
 
 static void send_info_common_bytes(sktinfo_t *skt, int index) {

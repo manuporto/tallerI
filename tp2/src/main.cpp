@@ -26,21 +26,21 @@
 
 using namespace std;
 
-void lisp_add(const vector<int>& atoms, int& result) {
-    for (size_t i = 0; i < atoms.size(); i++) {
-        result += atoms[i];
-    }
-
-}
 int main() {
     
     string str;
     getline(cin, str, '(');
     getline(cin, str, ')');
     istringstream iss(str);
+    map<string, LispFunctionType> env;
+    env.insert(pair<string, LispFunctionType>("+", add));
+    env.insert(pair<string, LispFunctionType>("-", sub));
+    env.insert(pair<string, LispFunctionType>("*", mul));
+    env.insert(pair<string, LispFunctionType>("/", div));
     string sub;
     int op;
     iss >> sub;
+    LispFunctionType fun = env[sub];
     vector<int> atoms;
     while (iss >> op) {
         atoms.push_back(op);
@@ -48,9 +48,9 @@ int main() {
     }
 
     int result = 0;
-    LispFunction *l = LispFunctionFactory::newLispFunction(
-            LispFunctionFactory::add);
+    LispFunction *l = LispFunctionFactory::newLispFunction(fun);
     l->run(atoms, result);
+    delete l;
     cout << result << endl;
     return 0;
 }

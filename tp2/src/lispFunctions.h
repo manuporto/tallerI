@@ -15,72 +15,95 @@
  *
  * ============================================================================
  */
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
+#endif
 
+#ifndef _LISP_FUNCTIONS_H
+#define _LISP_FUNCTIONS_H
+
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <cstdlib>
 #include <vector>
+
 
 using namespace std;
 enum LispFunctionType {
     add,
     sub,
     mul,
-    div
+    divv
 };
 
 class LispFunction {
     public:
-        virtual void run(const vector<int>& args, int& result){
+        virtual string run(const vector<string>& args){
             throw "Not Implemented.";
         }
         virtual ~LispFunction() {}
 };
 
-class LispArithmeticFunction: public LispFunction {
+class LispAdd: public LispFunction {
     public:
-        virtual void run(const vector<int>& args, int& result) = 0;
-        virtual ~LispArithmeticFunction() {}
-};
-
-class LispAdd: public LispArithmeticFunction {
-    public:
-        virtual void run(const vector<int>& args, int& result) {
-            for (size_t i = 0; i < args.size(); i++) {
-               result += args[i];
+        virtual string run(const vector<string>& args) {
+            int result = atoi(args[0].c_str());
+            stringstream ss;
+            for (size_t i = 1; i < args.size(); i++) {
+               result += atoi(args[i].c_str());
             } 
+
+            ss << result;
+            return ss.str();
         }
 
         virtual ~LispAdd() {}
 };
 
-class LispSub: public LispArithmeticFunction {
+class LispSub: public LispFunction {
     public:
-        virtual void run(const vector<int>& args, int& result) {
-            for (size_t i = 0; i < args.size(); i++) {
-               result -= args[i];
+        virtual string run(const vector<string>& args) {
+            int result = atoi(args[0].c_str());
+            stringstream ss;
+            for (size_t i = 1; i < args.size(); i++) {
+               result -= atoi(args[i].c_str());
             } 
+
+            ss << result;
+            return ss.str();
         }
 
         virtual ~LispSub() {}
 };
 
-class LispMul: public LispArithmeticFunction {
+class LispMul: public LispFunction {
     public:
-        virtual void run(const vector<int>& args, int& result) {
-            result = args[0];
+        virtual string run(const vector<string>& args) {
+            int result = atoi(args[0].c_str());
+            stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
-               result *= args[i];
+               result *= atoi(args[i].c_str());
             } 
+            
+            ss << result;
+            return ss.str();
         }
 
         virtual ~LispMul() {}
 };
 
-class LispDiv: public LispArithmeticFunction {
+class LispDiv: public LispFunction {
     public:
-        virtual void run(const vector<int>& args, int& result) {
-            result = args[0];
+        virtual string run(const vector<string>& args) {
+            double result = strtod(args[0].c_str(), NULL);
+            stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
-               result /= args[i];
+                result /= strtod(args[i].c_str(), NULL);
             } 
+
+            ss << result;
+            return ss.str();
         }
 
         virtual ~LispDiv() {}
@@ -99,7 +122,7 @@ class LispFunctionFactory {
                 case mul: 
                     return new LispMul;
                     break;
-               case div: 
+               case divv: 
                     return new LispDiv;
                     break;
                 default:
@@ -107,3 +130,5 @@ class LispFunctionFactory {
             }
         }
 };
+
+#endif

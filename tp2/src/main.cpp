@@ -22,34 +22,33 @@
 #include <string>
 #include <vector>
 
+#include "enviroment.h"
 #include "lispFunctions.h"
 
 using namespace std;
 
+vector<string> parse(string line) {
+    vector<string> exp;
+ 
+    return exp;
+}
+
 int main() {
-    
-    string str;
+    string str, sub;
     getline(cin, str, '(');
     getline(cin, str, ')');
     istringstream iss(str);
-    map<string, LispFunctionType> env;
-    env.insert(pair<string, LispFunctionType>("+", add));
-    env.insert(pair<string, LispFunctionType>("-", sub));
-    env.insert(pair<string, LispFunctionType>("*", mul));
-    env.insert(pair<string, LispFunctionType>("/", div));
-    string sub;
-    int op;
     iss >> sub;
-    LispFunctionType fun = env[sub];
-    vector<int> atoms;
-    while (iss >> op) {
-        atoms.push_back(op);
-        cout << "Substring: " << op << endl;
+    Enviroment env;
+    LispFunctionType fun = env.getFunctionType(sub);
+    vector<string> atoms;
+    while (iss >> sub) {
+        atoms.push_back(sub);
+        cout << "Substring: " << sub << endl;
     }
 
-    int result = 0;
     LispFunction *l = LispFunctionFactory::newLispFunction(fun);
-    l->run(atoms, result);
+    string result = l->run(atoms);
     delete l;
     cout << result << endl;
     return 0;

@@ -24,10 +24,9 @@
 #include "lispFunctions.h"
 
 class Enviroment {
-    private:
+    public:    
         map<string, LispFunctionType> env;
-
-    public:
+    
         Enviroment() {
             env.insert(pair<string, LispFunctionType>("+", add));
             env.insert(pair<string, LispFunctionType>("-", sub));
@@ -43,4 +42,5 @@ class Enviroment {
         ~Enviroment() {}
 };
 
+typedef map<string, LispFunctionType> Functions;
 #endif

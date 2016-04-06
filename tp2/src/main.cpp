@@ -17,7 +17,7 @@
  */
 
 #include <iostream>
-#include <stack>
+#include <queue>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -27,6 +27,14 @@
 
 using namespace std;
 
+void generate_std_funs(Functions &funs) {
+    funs.insert(pair<string, LispFunctionType>("+", add));
+    funs.insert(pair<string, LispFunctionType>("-", sub));
+    funs.insert(pair<string, LispFunctionType>("*", mul));
+    funs.insert(pair<string, LispFunctionType>("/", divv));
+    funs["dummy"]  = dummy; 
+
+}
 void replace_substr(string &input, const string old_str, const string new_str) {
     size_t index = 0;
     while ( (index = input.find(old_str, index))!= string::npos ) {
@@ -35,13 +43,12 @@ void replace_substr(string &input, const string old_str, const string new_str) {
     }
 }
 
-stack<string> parse(string input) {
+queue<string> parse(string input) {
     replace_substr(input, "(", " ( "); 
     replace_substr(input, ")", " ) "); 
-    stack<string> parsed;
+    queue<string> parsed;
     stringstream ss(input);
     string sub;
-    cout << input << endl; 
 
     while (ss >> sub) {
         parsed.push(sub) ;
@@ -49,28 +56,39 @@ stack<string> parse(string input) {
     return parsed;
 }
 
-void eval(Enviroment &env, stack<string> &parsed) {
-    int left = 0, right = 0;
-    string element = parsed.top();
-    if (element.compare(")")) right++;
+string eval(Functions &funs, queue<string> &parsed) {
     vector<string> args;
-    while (element.compare("(") != 0) {
-        if (element.compare(")")) right++;
-        else if (env.count(element) > 0) {
-            LispFunctionType fun = env.getFunctionType(element);
-            LispFunction *l = LispFunctionFactory::newLispFunction(fun);
-            string result = l->run(args);
-        }
-
+    LispFunction *l = LispFunctionFactory::newLispFunction(dummy);
+    string element, res;
+    while (!parsed.empty()) {
+        element = parsed.front();
         parsed.pop();
+        if (element.compare(")") == 0) {
+            //cout << res << endl;
+            return l->run(args); 
+        } else if (element.compare("(") == 0) {
+            cout << "eval call" << endl;
+            res = eval(funs, parsed);
+            args.push_back(res);
+        } else if (funs.count(element)) {
+            cout << "lisp fun def" << endl;
+            l = LispFunctionFactory::newLispFunction(funs[element]);
+        } else {
+            cout << "arg push" << endl;
+            args.push_back(element);
+        }
     }
+
+    return res;
 }
 int main() {
     string input;
     getline(cin, input);
-    stack<string> parsed = parse(input);
-    Enviroment env;
-    
+    queue<string> parsed = parse(input);
+    Functions funs;
+    generate_std_funs(funs);
+    input = eval(funs, parsed);
+    cout << input << endl;
     return 0;
 }
 /* 

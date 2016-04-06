@@ -34,7 +34,8 @@ enum LispFunctionType {
     add,
     sub,
     mul,
-    divv
+    divv,
+    dummy
 };
 
 class LispFunction {
@@ -43,6 +44,15 @@ class LispFunction {
             throw "Not Implemented.";
         }
         virtual ~LispFunction() {}
+};
+
+class LispDummy: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args) {
+            return "I'm a dummy function!";
+        }
+
+        virtual ~LispDummy() {}
 };
 
 class LispAdd: public LispFunction {
@@ -122,8 +132,11 @@ class LispFunctionFactory {
                 case mul: 
                     return new LispMul;
                     break;
-               case divv: 
+                case divv: 
                     return new LispDiv;
+                    break;
+                case dummy:
+                    return new LispDummy;
                     break;
                 default:
                     throw "Invalid LispFunctionType.";

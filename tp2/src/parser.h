@@ -3,15 +3,15 @@
  *
  *       Filename:  parser.h
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  07/04/16 21:09:52
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
- *   Organization:  
+ *         Author:  YOUR NAME (),
+ *   Organization:
  *
  * ============================================================================
  */
@@ -25,7 +25,7 @@ class Parser {
     private:
         LispFunctionFactory funFactory;
 
-        void replace_substr(string &input, const string old_str, 
+        void replace_substr(string &input, const string old_str,
                 const string new_str) {
             size_t index = 0;
             while ( (index = input.find(old_str, index))!= string::npos ) {
@@ -35,8 +35,8 @@ class Parser {
         }
 
         queue<string> separate_tokens(string input) {
-            replace_substr(input, "(", " ( "); 
-            replace_substr(input, ")", " ) "); 
+            replace_substr(input, "(", " ( ");
+            replace_substr(input, ")", " ) ");
             queue<string> parsed;
             stringstream ss(input);
             string sub;
@@ -46,7 +46,7 @@ class Parser {
             }
             return parsed;
         }
-        string eval(Functions &funs, Context ctxt, queue<string> &parsed) {
+        string eval(Functions &funs, Context& ctxt, queue<string> &parsed) {
             vector<string> args;
             LispFunction *l = funFactory.newLispFunction(dummy);
             string element, res;
@@ -55,7 +55,7 @@ class Parser {
                 parsed.pop();
                 if (element.compare(")") == 0) {
                     res = l->run(args, ctxt);
-                    return res; 
+                    return res;
                 } else if (element.compare("(") == 0) {
                     res = eval(funs, ctxt, parsed);
                     args.push_back(res);
@@ -73,7 +73,7 @@ class Parser {
             funFactory = LispFunctionFactory();
         }
 
-        string run(Functions &funs, Context ctxt, string input) {
+        string run(Functions &funs, Context& ctxt, string input) {
             queue<string> parsed = separate_tokens(input);
             return eval(funs, ctxt, parsed);
         }

@@ -3,15 +3,15 @@
  *
  *       Filename:  enviroment.h
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  03/04/16 12:33:10
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
- *   Organization:  
+ *         Author:  YOUR NAME (),
+ *   Organization:
  *
  * ============================================================================
  */
@@ -25,15 +25,15 @@
 
 /*
 class Enviroment {
-    public:    
+    public:
         map<string, LispFunctionType> env;
-    
+
         Enviroment() {
             env.insert(pair<string, LispFunctionType>("+", add));
             env.insert(pair<string, LispFunctionType>("-", sub));
             env.insert(pair<string, LispFunctionType>("*", mul));
             env.insert(pair<string, LispFunctionType>("/", divv));
- 
+
         }
 
         LispFunctionType getFunctionType(string key) {
@@ -44,5 +44,4 @@ class Enviroment {
 };
 */
 typedef map<string, LispFunctionType> Functions;
-//typedef map<string, string> Context;
 #endif

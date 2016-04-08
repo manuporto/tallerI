@@ -28,15 +28,13 @@
 using namespace std;
 
 void generate_std_funs(Functions &funs) {
-    funs.insert(pair<string, LispFunctionType>("+", add));
-    funs.insert(pair<string, LispFunctionType>("-", sub));
-    funs.insert(pair<string, LispFunctionType>("*", mul));
-    funs.insert(pair<string, LispFunctionType>("/", divv));
-
+    funs["+"] = add;
+    funs["-"] = sub;
+    funs["*"] = mul;
+    funs["/"] = divv;
     funs["print"] = print;
     funs["setq"] = setq;
     funs["dummy"]  = dummy;
-
 }
 /*
 void replace_substr(string &input, const string old_str, const string new_str) {

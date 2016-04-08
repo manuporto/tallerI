@@ -135,7 +135,6 @@ class LispPrint: public LispFunction {
                 } else {
                     cout << args[i];
                 }
-
             }
             cout << endl;
             return "";
@@ -155,6 +154,7 @@ class LispSetq: public LispFunction {
 class LispFunctionFactory {
     private:
         vector<LispFunction*> functions;
+
     public:
         LispFunction* newLispFunction(LispFunctionType type) {
             LispFunction *l;

@@ -17,6 +17,8 @@
  */
 
 #include <queue>
+#include <string>
+#include <vector>
 
 #include "lispFunctions.h"
 #include "enviroment.h"
@@ -42,7 +44,7 @@ class Parser {
             string sub;
 
             while (ss >> sub) {
-                parsed.push(sub) ;
+                parsed.push(sub);
             }
             return parsed;
         }
@@ -68,6 +70,7 @@ class Parser {
 
                 return res;
         }
+
     public:
         Parser() {
             funFactory = LispFunctionFactory();

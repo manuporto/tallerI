@@ -23,6 +23,7 @@
 
 #include "lispFunctions.h"
 
+/*
 class Enviroment {
     public:    
         map<string, LispFunctionType> env;
@@ -41,6 +42,7 @@ class Enviroment {
 
         ~Enviroment() {}
 };
-
+*/
 typedef map<string, LispFunctionType> Functions;
+//typedef map<string, string> Context;
 #endif

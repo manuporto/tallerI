@@ -3,15 +3,15 @@
  *
  *       Filename:  main.cpp
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  31/03/16 21:29:25
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Autor:  Porto, Manuel Ignacio 
- *         Padron: 96587  
+ *         Autor:  Porto, Manuel Ignacio
+ *         Padron: 96587
  *
  * ============================================================================
  */
@@ -32,7 +32,10 @@ void generate_std_funs(Functions &funs) {
     funs.insert(pair<string, LispFunctionType>("-", sub));
     funs.insert(pair<string, LispFunctionType>("*", mul));
     funs.insert(pair<string, LispFunctionType>("/", divv));
-    funs["dummy"]  = dummy; 
+
+    funs["print"] = print;
+    funs["setq"] = setq;
+    funs["dummy"]  = dummy;
 
 }
 /*
@@ -45,8 +48,8 @@ void replace_substr(string &input, const string old_str, const string new_str) {
 }
 
 queue<string> parse(string input) {
-    replace_substr(input, "(", " ( "); 
-    replace_substr(input, ")", " ) "); 
+    replace_substr(input, "(", " ( ");
+    replace_substr(input, ")", " ) ");
     queue<string> parsed;
     stringstream ss(input);
     string sub;
@@ -67,7 +70,7 @@ string eval(Functions &funs, queue<string> &parsed) {
         if (element.compare(")") == 0) {
             res = l->run(args);
             delete l;
-            return res; 
+            return res;
         } else if (element.compare("(") == 0) {
             cout << "eval call" << endl;
             res = eval(funs, parsed);
@@ -95,7 +98,6 @@ int main() {
     string input, res;
     while (getline(cin, input)) {
         res = parser.run(funs, ctxt, input);
-        cout << res << endl;
     }
     return 0;
 }

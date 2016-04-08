@@ -120,27 +120,40 @@ class LispDiv: public LispFunction {
 };
 
 class LispFunctionFactory {
+    private:
+        vector<LispFunction*> functions;
     public:
-        static LispFunction* newLispFunction(LispFunctionType type) {
+        LispFunction* newLispFunction(LispFunctionType type) {
+            LispFunction *l;
             switch (type) {
                 case add: 
-                    return new LispAdd;
+                    l = new LispAdd;
                     break;
                 case sub: 
-                    return new LispSub;
+                    l = new LispSub;
                     break;
                 case mul: 
-                    return new LispMul;
+                    l = new LispMul;
                     break;
                 case divv: 
-                    return new LispDiv;
+                    l = new LispDiv;
                     break;
                 case dummy:
-                    return new LispDummy;
+                    l = new LispDummy;
                     break;
                 default:
                     throw "Invalid LispFunctionType.";
             }
+
+            functions.push_back(l);
+            return l;
+        }
+
+        ~LispFunctionFactory() {
+            for (size_t i = 0; i < functions.size(); i++) {
+                delete functions[i];
+            }
+            return;
         }
 };
 

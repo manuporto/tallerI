@@ -22,11 +22,13 @@
 #ifndef _LISP_FUNCTIONS_H
 #define _LISP_FUNCTIONS_H
 
+#include <map>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <cstdlib>
 #include <vector>
+
 
 
 using namespace std;
@@ -35,12 +37,16 @@ enum LispFunctionType {
     sub,
     mul,
     divv,
-    dummy
+    dummy,
+    print
 };
+
+typedef map<string, string> Context;
+typedef map<string, LispFunctionType> Functions;
 
 class LispFunction {
     public:
-        virtual string run(const vector<string>& args){
+        virtual string run(const vector<string>& args, Context ctxt){
             throw "Not Implemented.";
         }
         virtual ~LispFunction() {}
@@ -48,7 +54,7 @@ class LispFunction {
 
 class LispDummy: public LispFunction {
     public:
-        virtual string run(const vector<string>& args) {
+        virtual string run(const vector<string>& args, Context ctxt) {
             return "I'm a dummy function!";
         }
 
@@ -57,7 +63,7 @@ class LispDummy: public LispFunction {
 
 class LispAdd: public LispFunction {
     public:
-        virtual string run(const vector<string>& args) {
+        virtual string run(const vector<string>& args, Context ctxt) {
             int result = atoi(args[0].c_str());
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
@@ -73,7 +79,7 @@ class LispAdd: public LispFunction {
 
 class LispSub: public LispFunction {
     public:
-        virtual string run(const vector<string>& args) {
+        virtual string run(const vector<string>& args, Context ctxt) {
             int result = atoi(args[0].c_str());
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
@@ -89,7 +95,7 @@ class LispSub: public LispFunction {
 
 class LispMul: public LispFunction {
     public:
-        virtual string run(const vector<string>& args) {
+        virtual string run(const vector<string>& args, Context ctxt) {
             int result = atoi(args[0].c_str());
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
@@ -105,7 +111,7 @@ class LispMul: public LispFunction {
 
 class LispDiv: public LispFunction {
     public:
-        virtual string run(const vector<string>& args) {
+        virtual string run(const vector<string>& args, Context ctxt) {
             double result = strtod(args[0].c_str(), NULL);
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
@@ -117,6 +123,13 @@ class LispDiv: public LispFunction {
         }
 
         virtual ~LispDiv() {}
+};
+
+class LispPrint: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, Context ctxt) {
+            return "";
+        }
 };
 
 class LispFunctionFactory {

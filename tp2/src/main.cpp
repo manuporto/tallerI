@@ -22,7 +22,6 @@
 #include <string>
 #include <vector>
 
-#include "enviroment.h"
 #include "lispFunctions.h"
 #include "parser.h"
 
@@ -87,35 +86,16 @@ string eval(Functions &funs, queue<string> &parsed) {
     return res;
 }
 */
+
 int main() {
-    string input;
-    getline(cin, input);
     Functions funs;
     generate_std_funs(funs);
+    Context ctxt;
     Parser parser;
-    string res = parser.run(funs, input);
-    cout << res << endl;
-    return 0;
-}
-/* 
-int main() {
-    string str, sub;
-    getline(cin, str, '(');
-    getline(cin, str, ')');
-    istringstream iss(str);
-    iss >> sub;
-    Enviroment env;
-    LispFunctionType fun = env.getFunctionType(sub);
-    vector<string> atoms;
-    while (iss >> sub) {
-        atoms.push_back(sub);
-        cout << "Substring: " << sub << endl;
+    string input, res;
+    while (getline(cin, input)) {
+        res = parser.run(funs, ctxt, input);
+        cout << res << endl;
     }
-
-    LispFunction *l = LispFunctionFactory::newLispFunction(fun);
-    string result = l->run(atoms);
-    delete l;
-    cout << result << endl;
     return 0;
 }
-*/

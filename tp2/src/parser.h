@@ -46,7 +46,7 @@ class Parser {
             }
             return parsed;
         }
-        string eval(Functions &funs, queue<string> &parsed) {
+        string eval(Functions &funs, Context ctxt, queue<string> &parsed) {
             vector<string> args;
             LispFunction *l = funFactory.newLispFunction(dummy);
             string element, res;
@@ -54,17 +54,14 @@ class Parser {
                 element = parsed.front();
                 parsed.pop();
                 if (element.compare(")") == 0) {
-                    res = l->run(args);
+                    res = l->run(args, ctxt);
                     return res; 
                 } else if (element.compare("(") == 0) {
-                    cout << "eval call" << endl;
-                    res = eval(funs, parsed);
+                    res = eval(funs, ctxt, parsed);
                     args.push_back(res);
                 } else if (funs.count(element)) {
-                    cout << "lisp fun def" << endl;
                     l = funFactory.newLispFunction(funs[element]);
                 } else {
-                    cout << "arg push" << endl;
                     args.push_back(element);
                 }
             }
@@ -76,8 +73,8 @@ class Parser {
             funFactory = LispFunctionFactory();
         }
 
-        string run(Functions &funs, string input) {
+        string run(Functions &funs, Context ctxt, string input) {
             queue<string> parsed = separate_tokens(input);
-            return eval(funs, parsed);
+            return eval(funs, ctxt, parsed);
         }
 };

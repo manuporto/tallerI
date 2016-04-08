@@ -3,15 +3,15 @@
  *
  *       Filename:  functions.h
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  02/04/16 12:38:30
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
- *   Organization:  
+ *         Author:  YOUR NAME (),
+ *   Organization:
  *
  * ============================================================================
  */
@@ -38,7 +38,8 @@ enum LispFunctionType {
     mul,
     divv,
     dummy,
-    print
+    print,
+    setq
 };
 
 typedef map<string, string> Context;
@@ -46,7 +47,7 @@ typedef map<string, LispFunctionType> Functions;
 
 class LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt){
+        virtual string run(const vector<string>& args, Context& ctxt){
             throw "Not Implemented.";
         }
         virtual ~LispFunction() {}
@@ -54,7 +55,7 @@ class LispFunction {
 
 class LispDummy: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt) {
+        virtual string run(const vector<string>& args, Context& ctxt) {
             return "I'm a dummy function!";
         }
 
@@ -63,12 +64,12 @@ class LispDummy: public LispFunction {
 
 class LispAdd: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt) {
+        virtual string run(const vector<string>& args, Context& ctxt) {
             int result = atoi(args[0].c_str());
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
                result += atoi(args[i].c_str());
-            } 
+            }
 
             ss << result;
             return ss.str();
@@ -79,12 +80,12 @@ class LispAdd: public LispFunction {
 
 class LispSub: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt) {
+        virtual string run(const vector<string>& args, Context& ctxt) {
             int result = atoi(args[0].c_str());
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
                result -= atoi(args[i].c_str());
-            } 
+            }
 
             ss << result;
             return ss.str();
@@ -95,13 +96,13 @@ class LispSub: public LispFunction {
 
 class LispMul: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt) {
+        virtual string run(const vector<string>& args, Context& ctxt) {
             int result = atoi(args[0].c_str());
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
                result *= atoi(args[i].c_str());
-            } 
-            
+            }
+
             ss << result;
             return ss.str();
         }
@@ -111,12 +112,12 @@ class LispMul: public LispFunction {
 
 class LispDiv: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt) {
+        virtual string run(const vector<string>& args, Context& ctxt) {
             double result = strtod(args[0].c_str(), NULL);
             stringstream ss;
             for (size_t i = 1; i < args.size(); i++) {
                 result /= strtod(args[i].c_str(), NULL);
-            } 
+            }
 
             ss << result;
             return ss.str();
@@ -127,7 +128,26 @@ class LispDiv: public LispFunction {
 
 class LispPrint: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context ctxt) {
+        virtual string run(const vector<string>& args, Context& ctxt) {
+            for (size_t i = 0; i < args.size(); i++) {
+                if (ctxt.count(args[i])) {
+                    cout << ctxt[args[i]];
+                } else {
+                    cout << args[i];
+                }
+
+            }
+            cout << endl;
+            return "";
+        }
+};
+
+class LispSetq: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, Context& ctxt) {
+            //cout << "var name: " << args[0] << endl;
+            //cout << "var value: " << args[1] << endl;
+            ctxt[args[0]] = args[1];
             return "";
         }
 };
@@ -139,17 +159,23 @@ class LispFunctionFactory {
         LispFunction* newLispFunction(LispFunctionType type) {
             LispFunction *l;
             switch (type) {
-                case add: 
+                case add:
                     l = new LispAdd;
                     break;
-                case sub: 
+                case sub:
                     l = new LispSub;
                     break;
-                case mul: 
+                case mul:
                     l = new LispMul;
                     break;
-                case divv: 
+                case divv:
                     l = new LispDiv;
+                    break;
+                case print:
+                    l = new LispPrint;
+                    break;
+                case setq:
+                    l = new LispSetq;
                     break;
                 case dummy:
                     l = new LispDummy;

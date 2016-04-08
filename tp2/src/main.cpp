@@ -24,6 +24,7 @@
 
 #include "enviroment.h"
 #include "lispFunctions.h"
+#include "parser.h"
 
 using namespace std;
 
@@ -35,6 +36,7 @@ void generate_std_funs(Functions &funs) {
     funs["dummy"]  = dummy; 
 
 }
+/*
 void replace_substr(string &input, const string old_str, const string new_str) {
     size_t index = 0;
     while ( (index = input.find(old_str, index))!= string::npos ) {
@@ -84,14 +86,15 @@ string eval(Functions &funs, queue<string> &parsed) {
     delete l;
     return res;
 }
+*/
 int main() {
     string input;
     getline(cin, input);
-    queue<string> parsed = parse(input);
     Functions funs;
     generate_std_funs(funs);
-    input = eval(funs, parsed);
-    cout << input << endl;
+    Parser parser;
+    string res = parser.run(funs, input);
+    cout << res << endl;
     return 0;
 }
 /* 

@@ -16,6 +16,9 @@
  * ============================================================================
  */
 
+#ifndef _THREAD_H
+#define _THREAD_H
+
 #include <pthread.h>
 
 class Thread {
@@ -29,8 +32,8 @@ class Thread {
             return self;
         }
 
-        //Thread(const Thread&);
-        //Thread& operator=(const Thread&);
+        Thread(const Thread&);
+        Thread& operator=(const Thread&);
 
     public:
 
@@ -47,3 +50,5 @@ class Thread {
         virtual void run() = 0;
         virtual ~Thread() {}
 };
+
+#endif

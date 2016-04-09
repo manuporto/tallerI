@@ -29,8 +29,8 @@ class Thread {
             return self;
         }
 
-        Thread(const Thread&);
-        Thread& operator=(const Thread&);
+        //Thread(const Thread&);
+        //Thread& operator=(const Thread&);
 
     public:
 

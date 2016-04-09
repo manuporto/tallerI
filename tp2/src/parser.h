@@ -22,10 +22,15 @@
 
 #include "lispFunctions.h"
 #include "enviroment.h"
+#include "thread.h"
 
-class Parser {
+class Parser: public Thread {
     private:
         LispFunctionFactory funFactory;
+        Functions &funs;
+        Context &ctxt;
+        string input;
+        
 
         void replace_substr(string &input, const string old_str,
                 const string new_str) {
@@ -36,7 +41,7 @@ class Parser {
             }
         }
 
-        queue<string> separate_tokens(string input) {
+        queue<string> separate_tokens() {
             replace_substr(input, "(", " ( ");
             replace_substr(input, ")", " ) ");
             queue<string> parsed;
@@ -48,7 +53,7 @@ class Parser {
             }
             return parsed;
         }
-        string eval(Functions &funs, Context& ctxt, queue<string> &parsed) {
+        string eval(queue<string> &parsed) {
             vector<string> args;
             LispFunction *l = funFactory.newLispFunction(dummy);
             string element, res;
@@ -59,7 +64,7 @@ class Parser {
                     res = l->run(args, ctxt);
                     return res;
                 } else if (element.compare("(") == 0) {
-                    res = eval(funs, ctxt, parsed);
+                    res = eval(parsed);
                     args.push_back(res);
                 } else if (funs.count(element)) {
                     l = funFactory.newLispFunction(funs[element]);
@@ -72,12 +77,15 @@ class Parser {
         }
 
     public:
-        Parser() {
+        Parser(Functions &funs, Context &ctxt, string input) : 
+            funs(funs), ctxt(ctxt), input(input) {
             funFactory = LispFunctionFactory();
         }
 
-        string run(Functions &funs, Context& ctxt, string input) {
-            queue<string> parsed = separate_tokens(input);
-            return eval(funs, ctxt, parsed);
+        void run() {
+            queue<string> parsed = separate_tokens();
+            eval(parsed);
         }
+
+        virtual ~Parser() {}
 };

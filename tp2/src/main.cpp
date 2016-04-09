@@ -92,10 +92,10 @@ int main() {
     Functions funs;
     generate_std_funs(funs);
     Context ctxt;
-    Parser parser;
     string input, res;
     while (getline(cin, input)) {
-        res = parser.run(funs, ctxt, input);
+        Parser parser(funs, ctxt, input);
+        parser.run();
     }
     return 0;
 }

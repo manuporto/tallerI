@@ -25,6 +25,7 @@
 #include "lispFunctions.h"
 #include "parser.h"
 #include "thread.h"
+#include "context.h"
 
 using namespace std;
 
@@ -42,19 +43,25 @@ int main() {
     Functions funs;
     generate_std_funs(funs);
     Context ctxt;
+    PContext pctxt(ctxt);
     string input, res;
     queue<Thread*> parsers;
+    Thread *p;
     while (getline(cin, input)) {
-        parsers.push(new Parser(funs, ctxt, input));
-        parsers.back()->start();
+        if (input.compare("(sync)")) {
+            while (!parsers.empty()){
+                p = parsers.front();       
+                p->join();
+                parsers.pop();
+                delete p;
+            }    
+        } else {
+            parsers.push(new Parser(funs, pctxt, input));
+            parsers.back()->start();
+
+        }
     }
 
-    Thread *p;
-    while (!parsers.empty()){
-        p = parsers.front();       
-        p->join();
-        parsers.pop();
-        delete p;
-    }
+    
     return 0;
 }

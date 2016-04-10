@@ -48,6 +48,16 @@ enum LispFunctionType {
 typedef map<string, LispFunctionType> Functions;
 
 class LispFunction {
+    protected:
+
+        string process_value(string arg, PContext& pctxt) {
+            if (pctxt.has_key(arg)) {
+                return pctxt.get(arg);
+            } else {
+                return arg;
+            }
+        }
+
     public:
 
         virtual string run(const vector<string>& args, PContext& pctxt){
@@ -70,14 +80,11 @@ class LispAdd: public LispFunction {
     public:
 
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            int result = 0;
+            int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
-            for (size_t i = 0; i < args.size(); i++) {
-                if (pctxt.has_key(args[i])) {
-                    result += atoi(pctxt.get(args[i]).c_str());
-                } else {
-                    result += atoi(args[i].c_str());
-                }
+
+            for (size_t i = 1; i < args.size(); i++) {
+                result += atoi(process_value(args[i], pctxt).c_str());
             }
 
             ss << result;
@@ -91,19 +98,17 @@ class LispSub: public LispFunction {
     public:
 
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            int result = 0;
+            int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
-            for (size_t i = 0; i < args.size(); i++) {
-                if (pctxt.has_key(args[i])) {
-                    result -= atoi(pctxt.get(args[i]).c_str());
-                } else {
-                    result -= atoi(args[i].c_str());
-                }
+
+            for (size_t i = 1; i < args.size(); i++) {
+                result -= atoi(process_value(args[i], pctxt).c_str());
             }
 
             ss << result;
             return ss.str();
-        }        
+        }
+    
         
         virtual ~LispSub() {}
 };
@@ -111,52 +116,41 @@ class LispSub: public LispFunction {
 class LispMul: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            int result = 1;
+            int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
-            for (size_t i = 0; i < args.size(); i++) {
-                if (pctxt.has_key(args[i])) {
-                    result *= atoi(pctxt.get(args[i]).c_str());
-                } else {
-                    result *= atoi(args[i].c_str());
-                }
+
+            for (size_t i = 1; i < args.size(); i++) {
+                result *= atoi(process_value(args[i], pctxt).c_str());
             }
+
             ss << result;
             return ss.str();
-        }    
-
+        }        
+        
         virtual ~LispMul() {}
 };
 
 class LispDiv: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            double result = 1;
+            double result = strtod(process_value(args[0], pctxt).c_str(), 
+                    NULL);
             stringstream ss;
-            for (size_t i = 0; i < args.size(); i++) {
-                if (pctxt.has_key(args[i])) {
-                    result /= strtod(pctxt.get(args[i]).c_str(), NULL);
-                } else {
-                    result /= strtod(args[i].c_str(), NULL);
-                }
+
+            for (size_t i = 1; i < args.size(); i++) {
+                result /= strtod(process_value(args[i], pctxt).c_str(), NULL);
             }
 
             ss << result;
             return ss.str();
-        }
-
-        virtual ~LispDiv() {}
+        }        virtual ~LispDiv() {}
 };
 
 class LispPrint: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             for (size_t i = 0; i < args.size(); i++) {
-                if (pctxt.has_key(args[i])) {
-                    cout << pctxt.get(args[i]);
-                } else {
-                    cout << args[i];
-                }
-
+                cout << process_value(args[i], pctxt);
                 cout << " ";
             }
             cout << endl;

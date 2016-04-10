@@ -20,15 +20,16 @@
 #include <string>
 #include <vector>
 
+#include "context.h"
 #include "lispFunctions.h"
-#include "enviroment.h"
 #include "thread.h"
 
 class Parser: public Thread {
     private:
+
         LispFunctionFactory funFactory;
         Functions &funs;
-        Context &ctxt;
+        PContext &pctxt;
         string input;
         
 
@@ -61,7 +62,7 @@ class Parser: public Thread {
                 element = parsed.front();
                 parsed.pop();
                 if (element.compare(")") == 0) {
-                    res = l->run(args, ctxt);
+                    res = l->run(args, pctxt);
                     return res;
                 } else if (element.compare("(") == 0) {
                     res = eval(parsed);
@@ -77,8 +78,8 @@ class Parser: public Thread {
         }
 
     public:
-        Parser(Functions &funs, Context &ctxt, string input) : 
-            funs(funs), ctxt(ctxt), input(input) {
+        Parser(Functions &funs, PContext &pctxt, string input) : 
+            funs(funs), pctxt(pctxt), input(input) {
             funFactory = LispFunctionFactory();
         }
 

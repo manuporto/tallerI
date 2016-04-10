@@ -48,7 +48,7 @@ int main() {
     queue<Thread*> parsers;
     Thread *p;
     while (getline(cin, input)) {
-        if (input.compare("(sync)")) {
+        if (input.compare("(sync)") == 0) {
             while (!parsers.empty()){
                 p = parsers.front();       
                 p->join();

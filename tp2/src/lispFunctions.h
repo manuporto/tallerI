@@ -30,8 +30,10 @@
 #include <vector>
 
 
+#include "context.h"
 
 using namespace std;
+
 enum LispFunctionType {
     add,
     sub,
@@ -42,12 +44,13 @@ enum LispFunctionType {
     setq
 };
 
-typedef map<string, string> Context;
+
 typedef map<string, LispFunctionType> Functions;
 
 class LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt){
+
+        virtual string run(const vector<string>& args, PContext& pctxt){
             throw "Not Implemented.";
         }
         virtual ~LispFunction() {}
@@ -55,7 +58,8 @@ class LispFunction {
 
 class LispDummy: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
+
+        virtual string run(const vector<string>& args, PContext& pctxt) {
             return "I'm a dummy function!";
         }
 
@@ -64,11 +68,16 @@ class LispDummy: public LispFunction {
 
 class LispAdd: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
-            int result = atoi(args[0].c_str());
+
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            int result = 0;
             stringstream ss;
-            for (size_t i = 1; i < args.size(); i++) {
-               result += atoi(args[i].c_str());
+            for (size_t i = 0; i < args.size(); i++) {
+                if (pctxt.has_key(args[i])) {
+                    result += atoi(pctxt.get(args[i]).c_str());
+                } else {
+                    result += atoi(args[i].c_str());
+                }
             }
 
             ss << result;
@@ -80,43 +89,55 @@ class LispAdd: public LispFunction {
 
 class LispSub: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
-            int result = atoi(args[0].c_str());
+
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            int result = 0;
             stringstream ss;
-            for (size_t i = 1; i < args.size(); i++) {
-               result -= atoi(args[i].c_str());
+            for (size_t i = 0; i < args.size(); i++) {
+                if (pctxt.has_key(args[i])) {
+                    result -= atoi(pctxt.get(args[i]).c_str());
+                } else {
+                    result -= atoi(args[i].c_str());
+                }
             }
 
             ss << result;
             return ss.str();
-        }
-
+        }        
+        
         virtual ~LispSub() {}
 };
 
 class LispMul: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
-            int result = atoi(args[0].c_str());
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            int result = 1;
             stringstream ss;
-            for (size_t i = 1; i < args.size(); i++) {
-               result *= atoi(args[i].c_str());
+            for (size_t i = 0; i < args.size(); i++) {
+                if (pctxt.has_key(args[i])) {
+                    result *= atoi(pctxt.get(args[i]).c_str());
+                } else {
+                    result *= atoi(args[i].c_str());
+                }
             }
-
             ss << result;
             return ss.str();
-        }
+        }    
 
         virtual ~LispMul() {}
 };
 
 class LispDiv: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
-            double result = strtod(args[0].c_str(), NULL);
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            double result = 1;
             stringstream ss;
-            for (size_t i = 1; i < args.size(); i++) {
-                result /= strtod(args[i].c_str(), NULL);
+            for (size_t i = 0; i < args.size(); i++) {
+                if (pctxt.has_key(args[i])) {
+                    result /= strtod(pctxt.get(args[i]).c_str(), NULL);
+                } else {
+                    result /= strtod(args[i].c_str(), NULL);
+                }
             }
 
             ss << result;
@@ -128,13 +149,15 @@ class LispDiv: public LispFunction {
 
 class LispPrint: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
+        virtual string run(const vector<string>& args, PContext& pctxt) {
             for (size_t i = 0; i < args.size(); i++) {
-                if (ctxt.count(args[i])) {
-                    cout << ctxt[args[i]];
+                if (pctxt.has_key(args[i])) {
+                    cout << pctxt.get(args[i]);
                 } else {
                     cout << args[i];
                 }
+
+                cout << " ";
             }
             cout << endl;
             return "";
@@ -143,10 +166,10 @@ class LispPrint: public LispFunction {
 
 class LispSetq: public LispFunction {
     public:
-        virtual string run(const vector<string>& args, Context& ctxt) {
+        virtual string run(const vector<string>& args, PContext& pctxt) {
             //cout << "var name: " << args[0] << endl;
             //cout << "var value: " << args[1] << endl;
-            ctxt[args[0]] = args[1];
+            pctxt.set(args[0], args[1]);
             return "";
         }
 };

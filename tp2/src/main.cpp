@@ -31,6 +31,7 @@ using std::cin;
 using std::queue;
 using std::string;
 
+typedef queue<Thread*> Threads;
 void generate_std_funs(Functions &funs) {
     funs["+"] = add;
     funs["-"] = sub;
@@ -46,34 +47,51 @@ void generate_std_funs(Functions &funs) {
     funs["dummy"]  = dummy;
 }
 
-int main() {
+bool input_contains_errors(string input) {
+    int pleft = 0;
+    int pright = 0;
+    for (size_t i = 0; i < input.size(); ++i) {
+        if (input[i] == '(') ++pleft;
+        else if (input[i] == ')') ++pright;
+    }
+
+    return pleft != pright;
+}
+
+void join_threads(Threads& threads) {
+    Thread *p;
+    while (!threads.empty()) {
+        p = threads.front();       
+        p->join();
+        threads.pop();
+        delete p;
+    } 
+}
+
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        cout << "ERROR: argumentos" << endl;
+        return 1;
+    }
     Functions funs;
     generate_std_funs(funs);
     Context ctxt;
     PContext pctxt(ctxt);
     string input, res;
-    queue<Thread*> parsers;
-    Thread *p;
+    Threads parsers;
     while (getline(cin, input)) {
-        if (input.compare("(sync)") == 0) {
-            while (!parsers.empty()){
-                p = parsers.front();       
-                p->join();
-                parsers.pop();
-                delete p;
-            }    
+        if (input_contains_errors(input)) {
+            cout << "ERROR: " << input << endl;
+            join_threads(parsers);
+            return 2;
+        } else if (input.compare("(sync)") == 0) {
+            join_threads(parsers);
         } else {
             parsers.push(new Parser(funs, pctxt, input));
             parsers.back()->start();
         }
     }
-
-    while (!parsers.empty()){
-        p = parsers.front();       
-        p->join();
-        parsers.pop();
-        delete p;
-    }
-
+    
+    join_threads(parsers);
     return 0;
 }

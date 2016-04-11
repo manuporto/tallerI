@@ -205,6 +205,9 @@ class LispCar: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = process_value(args[0], pctxt);
+            if (elements.compare("()") == 0) {
+                return elements;
+            }
             delete_outer_parenthesis(elements);
             size_t index = head_end_index(elements);
             return elements.substr(0, index);
@@ -215,6 +218,9 @@ class LispCdr: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = process_value(args[0], pctxt);
+            if (elements.compare("()") == 0) {
+                return elements;
+            }
             delete_outer_parenthesis(elements);
             size_t index = head_end_index(elements);
             return "(" + elements.substr(index + 1) + ")";

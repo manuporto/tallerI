@@ -75,8 +75,7 @@ class Parser: public Thread {
                     args.push_back(element);
                 }
             }
-
-                return res;
+            return res;
         }
 
     public:

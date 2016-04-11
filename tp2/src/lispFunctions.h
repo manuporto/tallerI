@@ -167,11 +167,12 @@ class LispDiv: public LispFunction {
 class LispPrint: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            for (size_t i = 0; i < args.size(); i++) {
+            size_t i;
+            for (i = 0; i < args.size() - 1; i++) {
                 cout << process_value(args[i], pctxt);
                 cout << " ";
             }
-            cout << endl;
+            cout << process_value(args[i], pctxt) << endl;
             return "";
         }
 };
@@ -203,7 +204,7 @@ class LispList: public LispFunction {
 class LispCar: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            string elements = args[0];
+            string elements = process_value(args[0], pctxt);
             delete_outer_parenthesis(elements);
             size_t index = head_end_index(elements);
             return elements.substr(0, index);
@@ -213,10 +214,10 @@ class LispCar: public LispFunction {
 class LispCdr: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            string elements = args[0];
+            string elements = process_value(args[0], pctxt);
             delete_outer_parenthesis(elements);
             size_t index = head_end_index(elements);
-            return "(" + elements.substr(index) + ")";
+            return "(" + elements.substr(index + 1) + ")";
         }
 };
 
@@ -227,11 +228,15 @@ class LispAppend: public LispFunction {
             string res = "(";
             size_t i;
             for (i = 0; i < args.size() - 1; ++i) {
-                elements = args[i];
+                elements = process_value(args[i], pctxt);
                 delete_outer_parenthesis(elements);
-                res += elements + " ";
+                if (elements.compare("") == 0) {
+                    res += elements;
+                } else {
+                    res += elements + " ";
+                }
             }
-            elements = args[i];
+            elements = process_value(args[i], pctxt);
             delete_outer_parenthesis(elements);
             res += elements + ")";
             return res;
@@ -241,9 +246,9 @@ class LispAppend: public LispFunction {
 class LispIf: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            string condition = args[0];
-            string true_value = args[1]; 
-            string false_value = args[2]; 
+            string condition = process_value(args[0], pctxt);
+            string true_value = process_value(args[1], pctxt); 
+            string false_value = process_value(args[2], pctxt); 
             if (condition.compare("()") != 0) {
                 return true_value;
             }

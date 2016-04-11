@@ -2,14 +2,7 @@
  * ============================================================================
  *
  *       Filename:  functions.h
- *
  *    Description:
- *
- *        Version:  1.0
- *        Created:  02/04/16 12:38:30
- *       Revision:  none
- *       Compiler:  gcc
- *
  *         Author:  YOUR NAME (),
  *   Organization:
  *
@@ -43,7 +36,9 @@ enum LispFunctionType {
     print,
     setq,
     list,
-    car
+    car,
+    cdr,
+    append
 };
 
 
@@ -59,6 +54,23 @@ class LispFunction {
             }
         }
 
+        size_t head_end_index(string elements) {
+        
+            int pleft = 0;
+            int pright = 0;
+            size_t i;
+            for (i = 0; i < elements.size(); ++i) {
+                if (elements[i] == ' ' && pleft == pright) {
+                    break;
+                } else if (elements[i] == '(') {
+                    ++pleft;
+                } else if (elements[i] == ')') {
+                    ++pright;
+                }
+            }
+
+            return i;
+        }
     public:
         virtual string run(const vector<string>& args, PContext& pctxt){
             throw "Not Implemented.";
@@ -183,27 +195,47 @@ class LispCar: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = args[0];
-            string res;
             // We eliminate the outer parenthesis, they aren't necessary
             elements.replace(0, 1, "");
             elements.replace(elements.size() - 1, 1, "");
 
-            int pleft = 0;
-            int pright = 0;
-            for (size_t i = 0; i < elements.size(); ++i) {
-                if (elements[i] == ' ' && pleft == pright) {
-                    return res;
-                } else if (elements[i] == '(') {
-                    ++pleft;
-                } else if (elements[i] == ')') {
-                    ++pright;
-                }
-
-                res += elements[i];
-            }
-            return "LispCar Error";
+            size_t index = head_end_index(elements);
+            return elements.substr(0, index);
         }
 };
+
+class LispCdr: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            string elements = args[0];
+            elements.replace(0, 1, "");
+            elements.replace(elements.size() - 1, 1, "");
+
+            size_t index = head_end_index(elements);
+            return "(" + elements.substr(index) + ")";
+        }
+};
+
+class LispAppend: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            string elements; 
+            string res = "(";
+            size_t i;
+            for (i = 0; i < args.size() - 1; ++i) {
+                elements = args[i];
+                elements.replace(0, 1, "");
+                elements.replace(elements.size() - 1, 1, "");
+                res += elements + " ";
+            }
+            elements = args[i];
+            elements.replace(0, 1, "");
+            elements.replace(elements.size() - 1, 1, "");
+            res += elements + ")";
+            return res;
+        } 
+};
+
 class LispFunctionFactory {
     private:
         vector<LispFunction*> functions;
@@ -235,6 +267,12 @@ class LispFunctionFactory {
                     break;
                   case car:
                     l = new LispCar;
+                    break;               
+                  case cdr:
+                    l = new LispCdr;
+                    break;               
+                  case append:
+                    l = new LispAppend;
                     break;               
                   case dummy:
                     l = new LispDummy;

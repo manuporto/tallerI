@@ -38,6 +38,8 @@ void generate_std_funs(Functions &funs) {
     funs["setq"] = setq;
     funs["list"] = list;
     funs["car"] = car;
+    funs["cdr"] = cdr;
+    funs["append"] = append;
     funs["dummy"]  = dummy;
 }
 

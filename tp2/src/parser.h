@@ -26,7 +26,6 @@
 
 class Parser: public Thread {
     private:
-
         LispFunctionFactory funFactory;
         Functions &funs;
         PContext &pctxt;

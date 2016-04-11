@@ -32,13 +32,11 @@ typedef map<string, string> Context;
 
 class PContext {
     private:
-
         Mutex m;
         Context &ctxt;
 
     public:
-
-        PContext(Context &ctxt) : ctxt(ctxt) {}
+        explicit PContext(Context &ctxt) : ctxt(ctxt) {}
 
         string get(string key) {
             if (ctxt.count(key)) {

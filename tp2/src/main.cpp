@@ -36,6 +36,8 @@ void generate_std_funs(Functions &funs) {
     funs["/"] = divv;
     funs["print"] = print;
     funs["setq"] = setq;
+    funs["list"] = list;
+    funs["car"] = car;
     funs["dummy"]  = dummy;
 }
 
@@ -58,10 +60,15 @@ int main() {
         } else {
             parsers.push(new Parser(funs, pctxt, input));
             parsers.back()->start();
-
         }
     }
 
-    
+    while (!parsers.empty()){
+        p = parsers.front();       
+        p->join();
+        parsers.pop();
+        delete p;
+    }
+
     return 0;
 }

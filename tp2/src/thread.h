@@ -23,7 +23,6 @@
 
 class Thread {
     private:
-
         pthread_t thread;
 
         static void* runner(void* data) {
@@ -36,7 +35,6 @@ class Thread {
         Thread& operator=(const Thread&);
 
     public:
-
         Thread() {}
         
         void start() {

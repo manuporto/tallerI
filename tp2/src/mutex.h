@@ -23,14 +23,12 @@
 
 class Mutex {
     private:
-
         pthread_mutex_t mutex;
 
         Mutex(const Mutex&);
         Mutex& operator=(const Mutex&);
 
     public:
-
         Mutex() {
             pthread_mutex_init(&this->mutex, NULL);
         }
@@ -50,15 +48,13 @@ class Mutex {
 
 class Lock {
     private:
-
         Mutex &m;
 
         Lock(const Lock&);
         Lock& operator=(const Lock&);
 
     public:
-
-        Lock(Mutex &m) : m(m) {
+        explicit Lock(Mutex &m) : m(m) {
             m.lock();
         }
 

@@ -22,10 +22,14 @@
 #include <cstdlib>
 #include <vector>
 
-
 #include "context.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
+using std::string;
+using std::stringstream;
+using std::map;
+using std::vector;
 
 enum LispFunctionType {
     add,
@@ -38,7 +42,8 @@ enum LispFunctionType {
     list,
     car,
     cdr,
-    append
+    append,
+    iff
 };
 
 
@@ -55,7 +60,6 @@ class LispFunction {
         }
 
         size_t head_end_index(string elements) {
-        
             int pleft = 0;
             int pright = 0;
             size_t i;
@@ -68,7 +72,6 @@ class LispFunction {
                     ++pright;
                 }
             }
-
             return i;
         }
 
@@ -235,6 +238,20 @@ class LispAppend: public LispFunction {
         } 
 };
 
+class LispIf: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            string condition = args[0];
+            string true_value = args[1]; 
+            string false_value = args[2]; 
+            if (condition.compare("()") != 0) {
+                return true_value;
+            }
+
+            return false_value;
+        }
+};
+
 class LispFunctionFactory {
     private:
         vector<LispFunction*> functions;
@@ -272,6 +289,9 @@ class LispFunctionFactory {
                     break;               
                   case append:
                     l = new LispAppend;
+                    break;               
+                  case iff:
+                    l = new LispIf;
                     break;               
                   case dummy:
                     l = new LispDummy;

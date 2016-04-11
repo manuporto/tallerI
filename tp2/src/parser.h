@@ -24,6 +24,9 @@
 #include "lispFunctions.h"
 #include "thread.h"
 
+using std::string;
+using std::queue;
+
 class Parser: public Thread {
     private:
         LispFunctionFactory funFactory;

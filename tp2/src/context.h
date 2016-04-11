@@ -25,8 +25,8 @@
 #include "mutex.h"
 #include "lispFunctions.h"
 
-
-using namespace std;
+using std::map;
+using std::string;
 
 typedef map<string, string> Context;
 

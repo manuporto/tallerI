@@ -27,7 +27,9 @@
 #include "thread.h"
 #include "context.h"
 
-using namespace std;
+using std::cin;
+using std::queue;
+using std::string;
 
 void generate_std_funs(Functions &funs) {
     funs["+"] = add;
@@ -40,6 +42,7 @@ void generate_std_funs(Functions &funs) {
     funs["car"] = car;
     funs["cdr"] = cdr;
     funs["append"] = append;
+    funs["if"] = iff;
     funs["dummy"]  = dummy;
 }
 

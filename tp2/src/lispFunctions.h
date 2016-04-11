@@ -41,7 +41,9 @@ enum LispFunctionType {
     divv,
     dummy,
     print,
-    setq
+    setq,
+    list,
+    car
 };
 
 
@@ -49,7 +51,6 @@ typedef map<string, LispFunctionType> Functions;
 
 class LispFunction {
     protected:
-
         string process_value(string arg, PContext& pctxt) {
             if (pctxt.has_key(arg)) {
                 return pctxt.get(arg);
@@ -59,7 +60,6 @@ class LispFunction {
         }
 
     public:
-
         virtual string run(const vector<string>& args, PContext& pctxt){
             throw "Not Implemented.";
         }
@@ -68,7 +68,6 @@ class LispFunction {
 
 class LispDummy: public LispFunction {
     public:
-
         virtual string run(const vector<string>& args, PContext& pctxt) {
             return "I'm a dummy function!";
         }
@@ -78,7 +77,6 @@ class LispDummy: public LispFunction {
 
 class LispAdd: public LispFunction {
     public:
-
         virtual string run(const vector<string>& args, PContext& pctxt) {
             int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
@@ -96,7 +94,6 @@ class LispAdd: public LispFunction {
 
 class LispSub: public LispFunction {
     public:
-
         virtual string run(const vector<string>& args, PContext& pctxt) {
             int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
@@ -161,13 +158,52 @@ class LispPrint: public LispFunction {
 class LispSetq: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            //cout << "var name: " << args[0] << endl;
-            //cout << "var value: " << args[1] << endl;
             pctxt.set(args[0], args[1]);
             return "";
         }
 };
 
+class LispList: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            if (args.size() == 0) {
+                return "()";
+            }
+            string res = "(";
+            size_t i;
+            for (i = 0; i < args.size() - 1; i++) {
+                res += process_value(args[i], pctxt) + " ";
+            }    
+            res += process_value(args[i], pctxt) + ")";
+            return res;
+        }
+};
+
+class LispCar: public LispFunction {
+    public:
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            string elements = args[0];
+            string res;
+            // We eliminate the outer parenthesis, they aren't necessary
+            elements.replace(0, 1, "");
+            elements.replace(elements.size() - 1, 1, "");
+
+            int pleft = 0;
+            int pright = 0;
+            for (size_t i = 0; i < elements.size(); ++i) {
+                if (elements[i] == ' ' && pleft == pright) {
+                    return res;
+                } else if (elements[i] == '(') {
+                    ++pleft;
+                } else if (elements[i] == ')') {
+                    ++pright;
+                }
+
+                res += elements[i];
+            }
+            return "LispCar Error";
+        }
+};
 class LispFunctionFactory {
     private:
         vector<LispFunction*> functions;
@@ -194,7 +230,13 @@ class LispFunctionFactory {
                 case setq:
                     l = new LispSetq;
                     break;
-                case dummy:
+                 case list:
+                    l = new LispList;
+                    break;
+                  case car:
+                    l = new LispCar;
+                    break;               
+                  case dummy:
                     l = new LispDummy;
                     break;
                 default:

@@ -71,6 +71,12 @@ class LispFunction {
 
             return i;
         }
+
+        void delete_outer_parenthesis(string& elements) {
+            elements.replace(0, 1, "");
+            elements.replace(elements.size() - 1, 1, "");
+        }
+
     public:
         virtual string run(const vector<string>& args, PContext& pctxt){
             throw "Not Implemented.";
@@ -195,10 +201,7 @@ class LispCar: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = args[0];
-            // We eliminate the outer parenthesis, they aren't necessary
-            elements.replace(0, 1, "");
-            elements.replace(elements.size() - 1, 1, "");
-
+            delete_outer_parenthesis(elements);
             size_t index = head_end_index(elements);
             return elements.substr(0, index);
         }
@@ -208,9 +211,7 @@ class LispCdr: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = args[0];
-            elements.replace(0, 1, "");
-            elements.replace(elements.size() - 1, 1, "");
-
+            delete_outer_parenthesis(elements);
             size_t index = head_end_index(elements);
             return "(" + elements.substr(index) + ")";
         }
@@ -224,13 +225,11 @@ class LispAppend: public LispFunction {
             size_t i;
             for (i = 0; i < args.size() - 1; ++i) {
                 elements = args[i];
-                elements.replace(0, 1, "");
-                elements.replace(elements.size() - 1, 1, "");
+                delete_outer_parenthesis(elements);
                 res += elements + " ";
             }
             elements = args[i];
-            elements.replace(0, 1, "");
-            elements.replace(elements.size() - 1, 1, "");
+            delete_outer_parenthesis(elements);
             res += elements + ")";
             return res;
         } 

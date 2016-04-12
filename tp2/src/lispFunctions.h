@@ -49,27 +49,6 @@ class LispFunction {
             }
         }
 
-        size_t head_end_index(string elements) {
-            int pleft = 0;
-            int pright = 0;
-            size_t i;
-            for (i = 0; i < elements.size(); ++i) {
-                if (elements[i] == ' ' && pleft == pright) {
-                    break;
-                } else if (elements[i] == '(') {
-                    ++pleft;
-                } else if (elements[i] == ')') {
-                    ++pright;
-                }
-            }
-            return i;
-        }
-
-        void delete_outer_parenthesis(string& elements) {
-            elements.replace(0, 1, "");
-            elements.replace(elements.size() - 1, 1, "");
-        }
-
     public:
         virtual string run(const vector<string>& args, PContext& pctxt){
             throw "Not Implemented.";
@@ -80,7 +59,7 @@ class LispFunction {
 class LispDummy: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            return "I'm a dummy function!";
+            return "ERROR: This class it must not be used";
         }
 
         virtual ~LispDummy() {}
@@ -151,7 +130,9 @@ class LispDiv: public LispFunction {
 
             ss << result;
             return ss.str();
-        }        virtual ~LispDiv() {}
+        }        
+        
+        virtual ~LispDiv() {}
 };
 
 class LispPrint: public LispFunction {
@@ -165,6 +146,8 @@ class LispPrint: public LispFunction {
             cout << process_value(args[i], pctxt) << endl;
             return "";
         }
+
+        virtual ~LispPrint() {}
 };
 
 class LispSetq: public LispFunction {
@@ -173,9 +156,37 @@ class LispSetq: public LispFunction {
             pctxt.set(args[0], args[1]);
             return "";
         }
+
+        virtual ~LispSetq() {}
+};
+class LispLists: public LispFunction {
+    protected:
+        size_t head_end_index(string elements) {
+            int pleft = 0;
+            int pright = 0;
+            size_t i;
+            for (i = 0; i < elements.size(); ++i) {
+                if (elements[i] == ' ' && pleft == pright) {
+                    break;
+                } else if (elements[i] == '(') {
+                    ++pleft;
+                } else if (elements[i] == ')') {
+                    ++pright;
+                }
+            }
+            return i;
+        }
+
+        void delete_outer_parenthesis(string& elements) {
+            elements.replace(0, 1, "");
+            elements.replace(elements.size() - 1, 1, "");
+        }
+
+    public:
+        virtual ~LispLists() {}
 };
 
-class LispList: public LispFunction {
+class LispList: public LispLists {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             if (args.size() == 0) {
@@ -189,9 +200,11 @@ class LispList: public LispFunction {
             res += process_value(args[i], pctxt) + ")";
             return res;
         }
+
+        virtual ~LispList() {}
 };
 
-class LispCar: public LispFunction {
+class LispCar: public LispLists {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = process_value(args[0], pctxt);
@@ -202,9 +215,11 @@ class LispCar: public LispFunction {
             size_t index = head_end_index(elements);
             return elements.substr(0, index);
         }
+
+        virtual ~LispCar() {}
 };
 
-class LispCdr: public LispFunction {
+class LispCdr: public LispLists {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements = process_value(args[0], pctxt);
@@ -215,9 +230,11 @@ class LispCdr: public LispFunction {
             size_t index = head_end_index(elements);
             return "(" + elements.substr(index + 1) + ")";
         }
+
+        virtual ~LispCdr() {}
 };
 
-class LispAppend: public LispFunction {
+class LispAppend: public LispLists {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             string elements; 
@@ -237,6 +254,8 @@ class LispAppend: public LispFunction {
             res += elements + ")";
             return res;
         } 
+        
+        virtual ~LispAppend() {}
 };
 
 class LispIf: public LispFunction {
@@ -251,6 +270,8 @@ class LispIf: public LispFunction {
 
             return false_value;
         }
+
+        virtual ~LispIf() {}
 };
 
 class LispFunctionFactory {

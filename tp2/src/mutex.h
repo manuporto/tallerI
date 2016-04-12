@@ -1,21 +1,3 @@
-/*
- * ============================================================================
- *
- *       Filename:  mutex.h
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  10/04/16 12:02:23
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *   Organization:  
- *
- * ============================================================================
- */
-
 #ifndef _MUTEX_H
 #define _MUTEX_H
 

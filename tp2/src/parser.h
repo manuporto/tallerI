@@ -1,20 +1,5 @@
-/*
- * ============================================================================
- *
- *       Filename:  parser.h
- *
- *    Description:
- *
- *        Version:  1.0
- *        Created:  07/04/16 21:09:52
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (),
- *   Organization:
- *
- * ============================================================================
- */
+#ifndef PARSER_H
+#define PARSER_H
 
 #include <queue>
 #include <string>
@@ -91,3 +76,5 @@ class Parser: public Thread {
 
         virtual ~Parser() {}
 };
+
+#endif

@@ -1,13 +1,3 @@
-/*
- * ============================================================================
- *
- *       Filename:  functions.h
- *    Description:
- *         Author:  YOUR NAME (),
- *   Organization:
- *
- * ============================================================================
- */
 #ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 1
 #endif
@@ -102,7 +92,7 @@ class LispAdd: public LispFunction {
             int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
 
-            for (size_t i = 1; i < args.size(); i++) {
+            for (size_t i = 1; i < args.size(); ++i) {
                 result += atoi(process_value(args[i], pctxt).c_str());
             }
 
@@ -119,7 +109,7 @@ class LispSub: public LispFunction {
             int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
 
-            for (size_t i = 1; i < args.size(); i++) {
+            for (size_t i = 1; i < args.size(); ++i) {
                 result -= atoi(process_value(args[i], pctxt).c_str());
             }
 
@@ -137,7 +127,7 @@ class LispMul: public LispFunction {
             int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
 
-            for (size_t i = 1; i < args.size(); i++) {
+            for (size_t i = 1; i < args.size(); ++i) {
                 result *= atoi(process_value(args[i], pctxt).c_str());
             }
 
@@ -155,7 +145,7 @@ class LispDiv: public LispFunction {
                     NULL);
             stringstream ss;
 
-            for (size_t i = 1; i < args.size(); i++) {
+            for (size_t i = 1; i < args.size(); ++i) {
                 result /= strtod(process_value(args[i], pctxt).c_str(), NULL);
             }
 
@@ -168,7 +158,7 @@ class LispPrint: public LispFunction {
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
             size_t i;
-            for (i = 0; i < args.size() - 1; i++) {
+            for (i = 0; i < args.size() - 1; ++i) {
                 cout << process_value(args[i], pctxt);
                 cout << " ";
             }
@@ -193,7 +183,7 @@ class LispList: public LispFunction {
             }
             string res = "(";
             size_t i;
-            for (i = 0; i < args.size() - 1; i++) {
+            for (i = 0; i < args.size() - 1; ++i) {
                 res += process_value(args[i], pctxt) + " ";
             }    
             res += process_value(args[i], pctxt) + ")";
@@ -316,7 +306,7 @@ class LispFunctionFactory {
         }
 
         ~LispFunctionFactory() {
-            for (size_t i = 0; i < functions.size(); i++) {
+            for (size_t i = 0; i < functions.size(); ++i) {
                 delete functions[i];
             }
             return;

@@ -1,21 +1,3 @@
-/*
- * ============================================================================
- *
- *       Filename:  context.h
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  10/04/16 12:25:13
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *   Organization:  
- *
- * ============================================================================
- */
-
 #ifndef _CONTEXT_H
 #define _CONTEXT_H
 

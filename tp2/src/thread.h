@@ -1,21 +1,3 @@
-/*
- * ============================================================================
- *
- *       Filename:  thread.h
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  09/04/16 13:58:20
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *   Organization:  
- *
- * ============================================================================
- */
-
 #ifndef _THREAD_H
 #define _THREAD_H
 

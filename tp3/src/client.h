@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#import <string>
+#include <string>
 
 using std::string;
 
@@ -11,7 +11,7 @@ class Client {
         virtual ~Client();
     private:
         void get_input();
-        void process_input();
+        void process_input(string input);
         string ip;
         string port;
 };

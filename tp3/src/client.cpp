@@ -6,24 +6,24 @@
 
 using std::cin;
 using std::cout;
+using std::endl;
 using std::string;
 using std::stringstream;
 
-Client::Client(string ip, string port) : ip(ip), port(port){
-    process_input();
-}
+Client::Client(string ip, string port) : ip(ip), port(port) { get_input(); }
 
 void Client::get_input() {
     string input;
-    stringstream ss;
     while (getline(cin, input)) {
-        ss << input;
-        cout << ss.str();
+        process_input(input);
     }
 }
 
-void Client::process_input(){
-
-
+void Client::process_input(string input) {
+    stringstream ss(input);
+    string data;
+    while (ss >> data) {
+        cout << data << endl;
+    }
 }
-Client::~Client(){}
+Client::~Client() {}

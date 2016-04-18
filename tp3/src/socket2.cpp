@@ -8,57 +8,76 @@
 
 #include "socket2.h"
 
-socket2::socket2(string hostname, string port, addrinfo& res) {
-    int status;
-    addrinfo hints;
-
-    memset(&hints, 0, sizeof(addrinfo));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-
-    if (!hostname) {
-        hints.ai_flags = AI_PASSIVE;
-    }
-
-    status = getaddrinfo(hostname.c_str(), port.c_str(), &hints, res);
-    if (status != 0) {
-        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-    }
-
+socket2::socket2(addrinfo& res) {
     fd = socket(res.ai_family, res.ai_socktype, res.ai_protocol);
-    if (self->fd == -1) {
-        fprintf(stderr, "Error: %s\n", strerror(errno));
+    if(self->fd == -1) {
+	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
+}
+
+socket2::socket2(int fd) : fd(fd) {
 }
 
 void socket2::socket_bind(addrinfo& res) {
     int status = bind(fd, res.ai_addr, res.ai_addrlen);
-    if (status == -1) {
-        fprintf(stderr, "Error: %s\n", strerror(errno));
+    if(status == -1) {
+	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
 void socket2::socket_connect(addrinfo& res) {
     int status = connect(fd, res.ai_addr, res.ai_addrlen);
-    if (status == -1) {
-        fprintf(stderr, "Error: %s\n", strerror(errno));
+    if(status == -1) {
+	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
 void socket2::socket_listen(int backlog) {
     int status = listen(fd, backlog);
-    if (status == -1) {
-        fprintf(stderr, "Error: %s\n", strerror(errno));
+    if(status == -1) {
+	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-void socket2::socket_accept() {}
+socket2* socket2::socket_accept() {
+    int tempskt = accept(fd, NULL, NULL);
+    return new socket2(tempskt);
+}
 
-void socket2::socket_send(void* buf, int size) {}
+void socket2::socket_send(void* buf, int size) {
+    return process_message(buf, size, 0);
+}
 
-void socket2::socket_receive(void* buf, int size) {}
+void socket2::socket_receive(void* buf, int size) {
+    return process_message(buf, size, 1);
+}
 
-void socket2::process_message(void* buf, int size, int mode) {}
+void socket2::process_message(void* buf, int size, int mode) {
+    int status;
+    char* c_buf = (char*)buf;
+    int processed = 0;
+    bool socket_valid = true;
+
+    while(processed < size) {
+	// pos = pos + processed;
+	if(mode == 0) {
+	    status = send(fd, &c_buf[processed], size - processed, 0);
+	} else {
+	    status = recv(fd, &c_buf[processed], size - processed, 0);
+	}
+
+	if(status <= 0) {
+	    socket_valid = false;
+	} else {
+	    // In case of no error status represents the bytes sent/received
+	    processed += status;
+	}
+    }
+
+    if(socket_valid) {
+	throw "Error";
+    }
+}
 
 socket2::~socket2() {
     shutdown(fd, SHUT_RDWR);

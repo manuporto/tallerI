@@ -12,8 +12,8 @@ class Client {
     private:
         void get_input();
         void process_input(string input);
-        string ip;
-        string port;
+		Socket *skt;
+		addrinfo res;
 };
 
 #endif // CLIENT_H

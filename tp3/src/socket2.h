@@ -6,10 +6,11 @@ typedef struct addrinfo addrinfo;
 class socket2 {
    public:
     socket2(string hostname, string port, addrinfo& res);
+	socket2(int fd);
     void socket_bind(addrinfo& res);
     void socket_connect(addrinfo& res);
     void socket_listen(int backlog);
-    void socket_accept();
+	socket2* socket_accept();
     void socket_send(void* buf, int size);
     void socket_receive(void* buf, int size);
     ~socket2();

@@ -91,12 +91,12 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="src">
-    <File Name="../../client.cpp"/>
-    <File Name="../../client.h"/>
-    <File Name="../../main.cpp"/>
-    <File Name="../../socket.h"/>
-    <File Name="../../socket.cpp"/>
-    <File Name="../../server.h"/>
-    <File Name="../../server.cpp"/>
+    <File Name="../../client_main.cpp"/>
+    <File Name="../../common_socket.cpp"/>
+    <File Name="../../common_socket.h"/>
+    <File Name="../../client_client.h"/>
+    <File Name="../../client_client.cpp"/>
+    <File Name="../../server_server.cpp"/>
+    <File Name="../../server_server.h"/>
   </VirtualDirectory>
 </CodeLite_Project>

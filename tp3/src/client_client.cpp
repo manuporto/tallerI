@@ -3,11 +3,11 @@
 #include <cstring>
 #include <sstream>
 #include <sys/types.h>
-#include <sys/socket.h>
+#include <sys/common_socket.h>
 #include <netdb.h>
 
-#include "client.h"
-#include "socket.h"
+#include "client_client.h"
+#include "common_socket.h"
 
 using std::cin;
 using std::cout;

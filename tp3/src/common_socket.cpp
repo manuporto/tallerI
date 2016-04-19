@@ -3,12 +3,12 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <sys/socket.h>
+#include <sys/common_socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <unistd.h>
 
-#include "socket.h"
+#include "common_socket.h"
 
 Socket::Socket(addrinfo& res) {
     fd = socket(res.ai_family, res.ai_socktype, res.ai_protocol);

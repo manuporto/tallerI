@@ -1,12 +1,13 @@
 #ifndef CLIENT_H
+#ifndef CLIENT_H
 #define CLIENT_H
 
 #include <string>
 #include <sys/types.h>
-#include <sys/socket.h>
+#include <sys/common_socket.h>
 #include <netdb.h>
 
-#include "socket.h"
+#include "common_socket.h"
 
 using std::string;
 

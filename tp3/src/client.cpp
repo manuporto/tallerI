@@ -1,8 +1,13 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <sstream>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 #include "client.h"
+#include "socket.h"
 
 using std::cin;
 using std::cout;
@@ -15,9 +20,9 @@ Client::Client(string hostname, string port) {
     memset(&hints, 0, sizeof(addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-	status = getaddrinfo(hostname, port, &hints, &res);	
-	*skt = Socket(res);
-	skt->socket_connect(res);
+	getaddrinfo(hostname.c_str(), port.c_str(), &hints, &res);	
+	*skt = Socket(*res);
+	skt->socket_connect(*res);
 	get_input();
 	}
 
@@ -26,7 +31,6 @@ void Client::get_input() {
     while (getline(cin, input)) {
         process_input(input);
     }
-	Socket s = skt_original.accept();
 }
 
 void Client::process_input(string input) {

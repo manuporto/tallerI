@@ -1,58 +1,59 @@
-#include <errno>
+#include <cerrno>
+#include <cstdio>
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <unistd.h>
 
-#include "socket2.h"
+#include "socket.h"
 
-socket2::socket2(addrinfo& res) {
+Socket::Socket(addrinfo& res) {
     fd = socket(res.ai_family, res.ai_socktype, res.ai_protocol);
-    if(self->fd == -1) {
+    if(fd == -1) {
 	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-socket2::socket2(int fd) : fd(fd) {
-}
+Socket::Socket(int fd) : fd(fd) {}
 
-void socket2::socket_bind(addrinfo& res) {
+void Socket::socket_bind(addrinfo& res) {
     int status = bind(fd, res.ai_addr, res.ai_addrlen);
     if(status == -1) {
 	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-void socket2::socket_connect(addrinfo& res) {
+void Socket::socket_connect(addrinfo& res) {
     int status = connect(fd, res.ai_addr, res.ai_addrlen);
     if(status == -1) {
 	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-void socket2::socket_listen(int backlog) {
+void Socket::socket_listen(int backlog) {
     int status = listen(fd, backlog);
     if(status == -1) {
 	fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-socket2* socket2::socket_accept() {
+Socket Socket::socket_accept() {
     int tempskt = accept(fd, NULL, NULL);
-    return new socket2(tempskt);
+    return Socket(tempskt);
 }
 
-void socket2::socket_send(void* buf, int size) {
+void Socket::socket_send(void* buf, int size) {
     return process_message(buf, size, 0);
 }
 
-void socket2::socket_receive(void* buf, int size) {
+void Socket::socket_receive(void* buf, int size) {
     return process_message(buf, size, 1);
 }
 
-void socket2::process_message(void* buf, int size, int mode) {
+void Socket::process_message(void* buf, int size, int mode) {
     int status;
     char* c_buf = (char*)buf;
     int processed = 0;
@@ -79,7 +80,7 @@ void socket2::process_message(void* buf, int size, int mode) {
     }
 }
 
-socket2::~socket2() {
+Socket::~Socket() {
     shutdown(fd, SHUT_RDWR);
     close(fd);
 }

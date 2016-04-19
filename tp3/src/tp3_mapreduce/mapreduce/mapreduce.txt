@@ -1,1 +1,1 @@
-./Release/src_client.cpp.o ./Release/src_main.cpp.o
+./Release/src_client.cpp.o ./Release/src_main.cpp.o ./Release/src_socket.cpp.o

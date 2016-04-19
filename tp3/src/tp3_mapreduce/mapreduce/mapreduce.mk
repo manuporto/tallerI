@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=montag
-Date                   :=17/04/16
+Date                   :=18/04/16
 CodeLitePath           :="/home/montag/.codelite"
 LinkerName             :=g++
 SharedObjectLinkerName :=g++ -shared -fPIC
@@ -60,7 +60,7 @@ AS       := as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/src_client.cpp$(ObjectSuffix) $(IntermediateDirectory)/src_main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/src_client.cpp$(ObjectSuffix) $(IntermediateDirectory)/src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/src_socket.cpp$(ObjectSuffix) 
 
 
 
@@ -106,6 +106,14 @@ $(IntermediateDirectory)/src_main.cpp$(DependSuffix): ../../main.cpp
 
 $(IntermediateDirectory)/src_main.cpp$(PreprocessSuffix): ../../main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/src_main.cpp$(PreprocessSuffix) "../../main.cpp"
+
+$(IntermediateDirectory)/src_socket.cpp$(ObjectSuffix): ../../socket.cpp $(IntermediateDirectory)/src_socket.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/montag/Documents/tallerI/tp3/src/socket.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/src_socket.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/src_socket.cpp$(DependSuffix): ../../socket.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/src_socket.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/src_socket.cpp$(DependSuffix) -MM "../../socket.cpp"
+
+$(IntermediateDirectory)/src_socket.cpp$(PreprocessSuffix): ../../socket.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/src_socket.cpp$(PreprocessSuffix) "../../socket.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

@@ -95,7 +95,8 @@
     <File Name="../../client.h"/>
     <File Name="../../main.cpp"/>
     <File Name="../../socket.h"/>
-    <File Name="../../socket2.h"/>
-    <File Name="../../socket2.cpp"/>
+    <File Name="../../socket.cpp"/>
+    <File Name="../../server.h"/>
+    <File Name="../../server.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

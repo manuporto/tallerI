@@ -2,18 +2,23 @@
 #define CLIENT_H
 
 #include <string>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+#include "socket.h"
 
 using std::string;
 
 class Client {
     public:
-        Client(string ip, string port);
+        Client(string hostname, string port);
         virtual ~Client();
     private:
         void get_input();
         void process_input(string input);
-		Socket *skt;
-		addrinfo res;
+		Socket* skt;
+		addrinfo* res;
 };
 
 #endif // CLIENT_H

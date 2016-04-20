@@ -50,9 +50,7 @@ class LispFunction {
         }
 
     public:
-        virtual string run(const vector<string>& args, PContext& pctxt){
-            throw "Not Implemented.";
-        }
+        virtual string run(const vector<string>& args, PContext& pctxt) = 0;
         virtual ~LispFunction() {}
 };
 

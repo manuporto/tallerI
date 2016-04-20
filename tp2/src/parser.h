@@ -20,8 +20,8 @@ class Parser: public Thread {
         string input;
         
 
-        void replace_substr(string &input, const string old_str,
-                const string new_str) {
+        void replace_substr(string &input, const string &old_str,
+                const string &new_str) {
             size_t index = 0;
             while ( (index = input.find(old_str, index))!= string::npos ) {
                 input.replace(index, old_str.size(), new_str);

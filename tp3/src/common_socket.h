@@ -1,6 +1,10 @@
 #ifndef SOCKET2_H
 #define SOCKET2_H
 
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+
 typedef struct addrinfo addrinfo;
 
 class Socket {

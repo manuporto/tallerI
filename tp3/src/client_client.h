@@ -1,10 +1,9 @@
 #ifndef CLIENT_H
-#ifndef CLIENT_H
 #define CLIENT_H
 
 #include <string>
 #include <sys/types.h>
-#include <sys/common_socket.h>
+#include <sys/socket.h>
 #include <netdb.h>
 
 #include "common_socket.h"
@@ -18,8 +17,8 @@ class Client {
     private:
         void get_input();
         void process_input(string input);
-		Socket* skt;
-		addrinfo* res;
+        Socket* skt;
+        addrinfo* res;
 };
 
 #endif // CLIENT_H

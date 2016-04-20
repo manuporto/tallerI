@@ -1,1 +1,1 @@
-./Release/src_client.cpp.o ./Release/src_main.cpp.o ./Release/src_socket.cpp.o
+./Release/client_main.cpp.o ./Release/common_socket.cpp.o ./Release/client_client.cpp.o ./Release/server_server.cpp.o ./Release/server_thread.cpp.o ./Release/server_mutex.cpp.o ./Release/server_main.cpp.o

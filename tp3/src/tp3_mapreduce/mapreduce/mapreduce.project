@@ -98,5 +98,10 @@
     <File Name="../../client_client.cpp"/>
     <File Name="../../server_server.cpp"/>
     <File Name="../../server_server.h"/>
+    <File Name="../../server_thread.h"/>
+    <File Name="../../server_thread.cpp"/>
+    <File Name="../../server_mutex.h"/>
+    <File Name="../../server_mutex.cpp"/>
+    <File Name="../../server_main.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

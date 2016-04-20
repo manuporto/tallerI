@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <sys/common_socket.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -62,9 +62,9 @@ void Socket::process_message(void* buf, int size, int mode) {
     while(processed < size) {
 	// pos = pos + processed;
 	if(mode == 0) {
-	    status = send(fd, &c_buf[processed], size - processed, 0);
+	    status = send(fd, &c_buf[processed], size - processed, MSG_NOSIGNAL);
 	} else {
-	    status = recv(fd, &c_buf[processed], size - processed, 0);
+	    status = recv(fd, &c_buf[processed], size - processed, MSG_NOSIGNAL);
 	}
 
 	if(status <= 0) {

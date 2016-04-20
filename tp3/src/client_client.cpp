@@ -3,7 +3,7 @@
 #include <cstring>
 #include <sstream>
 #include <sys/types.h>
-#include <sys/common_socket.h>
+#include <sys/socket.h>
 #include <netdb.h>
 
 #include "client_client.h"
@@ -37,7 +37,8 @@ void Client::process_input(string input) {
     stringstream ss(input);
     string data;
     while (ss >> data) {
-        cout << data << endl;
+        continue;
+        //skt->socket_send(&data, data.size());
     }
 }
 Client::~Client() {}

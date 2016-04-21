@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "context.h"
+#include "mutex.h"
 
 using std::cout;
 using std::endl;
@@ -42,11 +43,12 @@ typedef map<string, LispFunctionType> Functions;
 class LispFunction {
     protected:
         string process_value(string arg, PContext& pctxt) {
+            Mutex m;
+            Lock l(m);
             if (pctxt.has_key(arg)) {
                 return pctxt.get(arg);
-            } else {
-                return arg;
-            }
+            } 
+            return arg;
         }
 
     public:
@@ -59,8 +61,6 @@ class LispDummy: public LispFunction {
         virtual string run(const vector<string>& args, PContext& pctxt) {
             return "ERROR: This class it must not be used";
         }
-
-        virtual ~LispDummy() {}
 };
 
 class LispAdd: public LispFunction {
@@ -76,8 +76,6 @@ class LispAdd: public LispFunction {
             ss << result;
             return ss.str();
         }
-
-        virtual ~LispAdd() {}
 };
 
 class LispSub: public LispFunction {
@@ -93,9 +91,6 @@ class LispSub: public LispFunction {
             ss << result;
             return ss.str();
         }
-    
-        
-        virtual ~LispSub() {}
 };
 
 class LispMul: public LispFunction {
@@ -111,8 +106,6 @@ class LispMul: public LispFunction {
             ss << result;
             return ss.str();
         }        
-        
-        virtual ~LispMul() {}
 };
 
 class LispDiv: public LispFunction {
@@ -129,8 +122,6 @@ class LispDiv: public LispFunction {
             ss << result;
             return ss.str();
         }        
-        
-        virtual ~LispDiv() {}
 };
 
 class LispPrint: public LispFunction {
@@ -141,11 +132,11 @@ class LispPrint: public LispFunction {
                 cout << process_value(args[i], pctxt);
                 cout << " ";
             }
+            Mutex m;
+            Lock l(m);
             cout << process_value(args[i], pctxt) << endl;
             return "";
         }
-
-        virtual ~LispPrint() {}
 };
 
 class LispSetq: public LispFunction {
@@ -154,9 +145,8 @@ class LispSetq: public LispFunction {
             pctxt.set(args[0], args[1]);
             return "";
         }
-
-        virtual ~LispSetq() {}
 };
+
 class LispLists: public LispFunction {
     protected:
         size_t head_end_index(string elements) {
@@ -198,8 +188,6 @@ class LispList: public LispLists {
             res += process_value(args[i], pctxt) + ")";
             return res;
         }
-
-        virtual ~LispList() {}
 };
 
 class LispCar: public LispLists {
@@ -213,8 +201,6 @@ class LispCar: public LispLists {
             size_t index = head_end_index(elements);
             return elements.substr(0, index);
         }
-
-        virtual ~LispCar() {}
 };
 
 class LispCdr: public LispLists {
@@ -228,8 +214,6 @@ class LispCdr: public LispLists {
             size_t index = head_end_index(elements);
             return "(" + elements.substr(index + 1) + ")";
         }
-
-        virtual ~LispCdr() {}
 };
 
 class LispAppend: public LispLists {
@@ -252,8 +236,6 @@ class LispAppend: public LispLists {
             res += elements + ")";
             return res;
         } 
-        
-        virtual ~LispAppend() {}
 };
 
 class LispIf: public LispFunction {
@@ -268,8 +250,6 @@ class LispIf: public LispFunction {
 
             return false_value;
         }
-
-        virtual ~LispIf() {}
 };
 
 class LispFunctionFactory {

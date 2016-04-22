@@ -21,9 +21,13 @@ Client::Client(string hostname, string port) {
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 	getaddrinfo(hostname.c_str(), port.c_str(), &hints, &res);	
-	*skt = Socket(*res);
+	skt = new Socket(*res);
 	skt->socket_connect(*res);
-	get_input();
+    string msg = "Hola";
+    int l = msg.size();
+    skt->socket_send(&l, sizeof(l));
+    skt->socket_send(&msg, l);
+    //get_input();
 	}
 
 void Client::get_input() {
@@ -41,4 +45,6 @@ void Client::process_input(string input) {
         //skt->socket_send(&data, data.size());
     }
 }
-Client::~Client() {}
+Client::~Client() {
+    delete skt;
+}

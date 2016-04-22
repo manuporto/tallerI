@@ -3,8 +3,12 @@
 #include "server_server.h"
 
 using std::cout;
+using std::endl;
 
 int main(int argc, char** argv) {
-    Server sv("8080");
+    if (argc != 2) {
+        return 1;
+    }
+    Server sv(argv[1]);
     return 0;
 }

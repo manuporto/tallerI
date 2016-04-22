@@ -10,6 +10,9 @@
 
 #include "common_socket.h"
 
+using std::cout;
+using std::endl;
+
 Socket::Socket(addrinfo& res) {
     fd = socket(res.ai_family, res.ai_socktype, res.ai_protocol);
     if(fd == -1) {
@@ -40,9 +43,12 @@ void Socket::socket_listen(int backlog) {
     }
 }
 
-Socket Socket::socket_accept() {
+Socket* Socket::socket_accept() {
     int tempskt = accept(fd, NULL, NULL);
-    return Socket(tempskt);
+    if(tempskt == -1) {
+	fprintf(stderr, "Error: %s\n", strerror(errno));
+    }
+    return new Socket(tempskt);
 }
 
 void Socket::socket_send(void* buf, int size) {
@@ -75,7 +81,7 @@ void Socket::process_message(void* buf, int size, int mode) {
 	}
     }
 
-    if(socket_valid) {
+    if(!socket_valid) {
 	throw "Error";
     }
 }

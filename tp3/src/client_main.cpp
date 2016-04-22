@@ -4,8 +4,12 @@
 
 using std::cin;
 using std::cout;
+using std::endl;
 
 int main(int argc, char **argv) {
-    //Client cl("127.0.0.1", "8080");
+    if (argc != 3) {
+        return 1;
+    }
+    Client cl(argv[1], argv[2]);
     return 0;
 }

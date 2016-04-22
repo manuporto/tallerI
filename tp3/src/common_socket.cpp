@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cerrno>
 #include <cstdio>
 #include <iostream>
@@ -125,6 +126,7 @@ void Socket::socket_receive(string& msg, size_t size)
     vector<char> buffer(size);
     std::vector<char>::iterator nw_data_start = buffer.begin();
     std::vector<char>::iterator nw_data_end = buffer.begin();
+    std::vector<char>::iterator it;
     size_t processed = 0;
     bool socket_valid = true;
 
@@ -134,8 +136,14 @@ void Socket::socket_receive(string& msg, size_t size)
             socket_valid = false;
         } else {
             processed += status;
-            std::advance(nw_data_end, processed);
-            msg.append(nw_data_start, nw_data_end);
+            it = std::find(buffer.begin(), buffer.end(), '\n');
+            if (it != buffer.end()) {
+                msg.append(nw_data_start, it);
+                break;
+            } else {
+                std::advance(nw_data_end, processed);
+                msg.append(nw_data_start, nw_data_end);
+            }
             std::advance(nw_data_start, processed);
         }
     }

@@ -35,7 +35,7 @@ void Server::get_data()
         c_skt->socket_receive(&msglen, sizeof(msglen));
         c_skt->socket_receive(msg, msglen);
         cout << msg << endl; 
-    } while (msg.compare("q") != 0);
+    } while (msg.compare("End\n") != 0);
     delete c_skt;
 }
 

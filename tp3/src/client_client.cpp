@@ -23,11 +23,7 @@ Client::Client(string hostname, string port) {
 	getaddrinfo(hostname.c_str(), port.c_str(), &hints, &res);	
 	skt = new Socket(*res);
 	skt->socket_connect(*res);
-    string msg = "Hola";
-    int l = msg.size();
-    skt->socket_send(&l, sizeof(l));
-    skt->socket_send(&msg, l);
-    //get_input();
+    get_input();
 	}
 
 void Client::get_input() {
@@ -40,9 +36,11 @@ void Client::get_input() {
 void Client::process_input(string input) {
     stringstream ss(input);
     string data;
+    size_t size;
     while (ss >> data) {
-        continue;
-        //skt->socket_send(&data, data.size());
+        size = data.size();
+        skt->socket_send(&size, sizeof(size));
+        skt->socket_send(data, size);
     }
 }
 Client::~Client() {

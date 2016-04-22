@@ -12,7 +12,8 @@ using std::string;
 using std::cout;
 using std::endl;
 
-Server::Server(string port) {    
+Server::Server(string port)
+{
     addrinfo hints;
     memset(&hints, 0, sizeof(addrinfo));
     hints.ai_family = AF_INET;
@@ -22,15 +23,23 @@ Server::Server(string port) {
     skt = new Socket(*res);
     skt->socket_bind(*res);
     skt->socket_listen(10);
+    get_data();
+}
+
+void Server::get_data()
+{
     Socket* c_skt = skt->socket_accept();
-    int l;
-    c_skt->socket_receive(&l, sizeof(l));
+    size_t msglen;
     string msg;
-    c_skt->socket_receive(&msg, l);
-    cout << "Mensaje: " << msg << endl;
+    do {
+        c_skt->socket_receive(&msglen, sizeof(msglen));
+        c_skt->socket_receive(msg, msglen);
+        cout << msg << endl; 
+    } while (msg.compare("q") != 0);
     delete c_skt;
 }
 
-Server::~Server() {
+Server::~Server()
+{
     delete skt;
 }

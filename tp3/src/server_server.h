@@ -12,7 +12,8 @@ class Server {
     Server(string port);
     ~Server();
 
-   private:
+private:
+    void get_data();
     Socket* skt;
     addrinfo* res;
 };

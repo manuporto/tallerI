@@ -34,7 +34,7 @@ void Client::get_input()
         process_input(input);
     }
     
-    string end = "End";
+    string end = "End\n";
     size_t l = end.size();
     skt->socket_send(&l, sizeof(l));
     skt->socket_send(end, l);
@@ -51,12 +51,11 @@ void Client::process_input(string input)
     value.append("-");
     value.append(data);
     ss >> key;
+    
+    key += " " + value + "\n";
     size = key.size();
     skt->socket_send(&size, sizeof(size));
     skt->socket_send(key, size);
-    size = value.size();
-    skt->socket_send(&size, sizeof(size));
-    skt->socket_send(value, size);
 }
 Client::~Client()
 {

@@ -20,21 +20,18 @@ class PContext {
     public:
         explicit PContext(Context &ctxt) : ctxt(ctxt) {}
 
-        string get(string key) {
-            if (ctxt.count(key)) {
-                return ctxt[key];
-            } else {
-                throw "Key doesn't exists.";
-            }
-        }
-
-        bool has_key(string key) {
-            return ctxt.count(key) == 1;
-        }
-
         void set(string key, string value) {
             Lock l(m);
             ctxt[key] = value;
+        }
+
+        bool get_if_has_key(string &key, string &ret_value) {
+            Lock l(m);
+            if (ctxt.count(key)) {
+                ret_value = ctxt[key];
+                return true;
+            }
+            return false;
         }
 };
 

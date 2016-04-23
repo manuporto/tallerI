@@ -43,10 +43,9 @@ typedef map<string, LispFunctionType> Functions;
 class LispFunction {
     protected:
         string process_value(string arg, PContext& pctxt) {
-            Mutex m;
-            Lock l(m);
-            if (pctxt.has_key(arg)) {
-                return pctxt.get(arg);
+            string res;
+            if (pctxt.get_if_has_key(arg, res)) {
+                return res;
             } 
             return arg;
         }
@@ -63,38 +62,66 @@ class LispDummy: public LispFunction {
         }
 };
 
-class LispAdd: public LispFunction {
+class LispArithmetic: public LispFunction {
+    protected:
+        typedef int (*arithmetic_fun)(int, int);
+        int calculate(const vector<string>& args, PContext& pctxt, 
+                arithmetic_fun operation) {
+            int result = atoi(process_value(args[0], pctxt).c_str());
+            int argument;
+            for (size_t i = 1; i < args.size(); ++i) {
+                argument = atoi(process_value(args[i], pctxt).c_str());
+                result = operation(result, argument);
+            }
+            return result;
+        }
+
+};
+
+class LispAdd: public LispArithmetic {
+    private:
+        static int add(int a, int b) {
+            return a + b;
+        }
+
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            int result = atoi(process_value(args[0], pctxt).c_str());
+            int result = calculate(args, pctxt, add);
             stringstream ss;
-
-            for (size_t i = 1; i < args.size(); ++i) {
-                result += atoi(process_value(args[i], pctxt).c_str());
-            }
-
             ss << result;
             return ss.str();
         }
 };
 
-class LispSub: public LispFunction {
+class LispSub: public LispArithmetic {
+    private:
+        static int sub(int a, int b) {
+            return a - b;
+        }
+
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
-            int result = atoi(process_value(args[0], pctxt).c_str());
+            int result = calculate(args, pctxt, sub);
             stringstream ss;
-
-            for (size_t i = 1; i < args.size(); ++i) {
-                result -= atoi(process_value(args[i], pctxt).c_str());
-            }
-
             ss << result;
             return ss.str();
         }
 };
 
-class LispMul: public LispFunction {
+class LispMul: public LispArithmetic {
+    private:
+        static int mul(int a, int b) {
+            return a * b;
+        }
+
     public:
+        virtual string run(const vector<string>& args, PContext& pctxt) {
+            int result = calculate(args, pctxt, mul);
+            stringstream ss;
+            ss << result;
+            return ss.str();
+        }
+        /* 
         virtual string run(const vector<string>& args, PContext& pctxt) {
             int result = atoi(process_value(args[0], pctxt).c_str());
             stringstream ss;
@@ -105,7 +132,7 @@ class LispMul: public LispFunction {
 
             ss << result;
             return ss.str();
-        }        
+        }*/      
 };
 
 class LispDiv: public LispFunction {
@@ -125,19 +152,22 @@ class LispDiv: public LispFunction {
 };
 
 class LispPrint: public LispFunction {
+    private:
+        static Mutex m;
+
     public:
         virtual string run(const vector<string>& args, PContext& pctxt) {
+            Lock l(m);
             size_t i;
             for (i = 0; i < args.size() - 1; ++i) {
                 cout << process_value(args[i], pctxt);
                 cout << " ";
             }
-            Mutex m;
-            Lock l(m);
             cout << process_value(args[i], pctxt) << endl;
             return "";
         }
 };
+Mutex LispPrint::m;
 
 class LispSetq: public LispFunction {
     public:
@@ -169,9 +199,6 @@ class LispLists: public LispFunction {
             elements.replace(0, 1, "");
             elements.replace(elements.size() - 1, 1, "");
         }
-
-    public:
-        virtual ~LispLists() {}
 };
 
 class LispList: public LispLists {

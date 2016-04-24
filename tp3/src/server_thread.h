@@ -11,9 +11,9 @@ class Thread {
     virtual ~Thread();
 
    private:
-    static void* runner(void* data);
-    Thread(const Thread&);
+    //Thread(const Thread&);
     Thread& operator=(const Thread&);
+    static void* runner(void* data);
     pthread_t thread;
 };
 

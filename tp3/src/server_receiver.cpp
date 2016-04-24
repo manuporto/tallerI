@@ -26,7 +26,8 @@ void Receiver::run() {
         ss >> key;
         ss >> value;
         City city_tmpt = parse_value(value);
-        cout << city_tmpt.first <<  " " <<  city_tmpt.second << endl;
+        tmpts.set(key, city_tmpt);
+        //cout << city_tmpt.first << " " << city_tmpt.second << endl;
     } while (msg.compare("End") != 0);
 }
 
@@ -36,5 +37,5 @@ City Receiver::parse_value(string value) {
     getline(ss, city, '-');
     ss >> temperature;
     return make_pair(city, temperature);
-    }
+}
 Receiver::~Receiver() { delete skt; }

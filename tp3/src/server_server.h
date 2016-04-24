@@ -11,12 +11,11 @@ using std::string;
 class Server {
    public:
     Server(string port);
+    void run();
     ~Server();
 
 private:
-    void get_data();
-    Socket* sv_skt;
-    addrinfo* res;
+    string port;
     PTemperatures tmpts;
 };
 

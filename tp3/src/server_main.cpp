@@ -10,5 +10,6 @@ int main(int argc, char** argv) {
         return 1;
     }
     Server sv(argv[1]);
+    sv.run();
     return 0;
 }

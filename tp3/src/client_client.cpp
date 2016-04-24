@@ -24,6 +24,7 @@ Client::Client(string hostname, string port)
     getaddrinfo(hostname.c_str(), port.c_str(), &hints, &res);
     skt = new Socket(*res);
     skt->socket_connect(*res);
+    freeaddrinfo(res);
     get_input();
 }
 

@@ -1,39 +1,30 @@
 #include <iostream>
-#include <cstring>
-#include <string>
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <cstdio>
 #include <netdb.h>
 
 #include "common_socket.h"
+#include "server_accepter.h"
 #include "server_receiver.h"
 #include "server_server.h"
 
 using std::string;
-using std::cin;
 using std::cout;
 using std::endl;
 
-Server::Server(string port) {
-    addrinfo hints;
-    memset(&hints, 0, sizeof(addrinfo));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
-    getaddrinfo(NULL, port.c_str(), &hints, &res);
-    sv_skt = new Socket(*res);
-    sv_skt->socket_bind(*res);
-    sv_skt->socket_listen(10);
-    string cmd;
-    getline(cin, cmd);
-    get_data();
+Server::Server(string port) : port(port){
+    PTemperatures tmpts;
 }
 
-void Server::get_data() {
-    Socket* c_skt = sv_skt->socket_accept();
-    Receiver rcivr(c_skt, tmpts);
-    rcivr.start();
-    rcivr.join();
+void Server::run() {
+    Accepter accptr(port, tmpts);
+    accptr.start();
+    char input;
+    do {
+        input = getchar();
+    } while (input != 'q');
+    cout << "Sali" << endl;
+    //accptr.join();
+    cout << "Joinee" << endl;
 }
 
 Server::~Server() {}

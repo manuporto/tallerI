@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cstdio>
+#include <stdexcept>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -11,6 +12,8 @@
 #include <vector>
 
 #include "common_socket.h"
+
+#define MAX_MSG_LEN 256
 
 using std::cout;
 using std::endl;
@@ -49,12 +52,12 @@ void Socket::socket_listen(int backlog) {
 Socket* Socket::socket_accept() {
     int tempskt = accept(fd, NULL, NULL);
     if (tempskt == -1) {
-        fprintf(stderr, "Error: %s\n", strerror(errno));
+        throw std::runtime_error("Error while attempting to accept a new connection.");
     }
     return new Socket(tempskt);
 }
 
-void Socket::socket_send(void* buf, int size) {
+/*void Socket::socket_send(void* buf, int size) {
     return process_message(buf, size, 0);
 }
 
@@ -90,7 +93,7 @@ void Socket::process_message(void* buf, int size, int mode) {
         cout << "Error" << endl;
     }
 }
-
+*/
 void Socket::socket_send(string& msg, size_t size) {
     int status;
     vector<char> buffer(msg.begin(), msg.end());
@@ -110,18 +113,18 @@ void Socket::socket_send(string& msg, size_t size) {
     }
 }
 
-void Socket::socket_receive(string& msg, size_t size) {
+void Socket::socket_receive(string& msg) {
     msg = "";
     int status;
-    vector<char> buffer(size);
+    vector<char> buffer(MAX_MSG_LEN);
     std::vector<char>::iterator nw_data_start = buffer.begin();
     std::vector<char>::iterator nw_data_end = buffer.begin();
     std::vector<char>::iterator it;
     size_t processed = 0;
     bool socket_valid = true;
 
-    while (processed < size) {
-        status = recv(fd, &buffer[processed], size - processed, MSG_NOSIGNAL);
+    while (processed < MAX_MSG_LEN) {
+        status = recv(fd, &buffer[processed], MAX_MSG_LEN - processed, MSG_NOSIGNAL);
         if (status <= 0) {
             socket_valid = false;
         } else {

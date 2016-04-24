@@ -20,6 +20,7 @@ typedef queue<Receiver*> Receivers;
 class Accepter : public Thread {
    public:
     Accepter(string port, PTemperatures& tmpts);
+    void join();
     virtual void run();
     ~Accepter();
 

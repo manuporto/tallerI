@@ -1,10 +1,15 @@
 #include <cstring>
+#include <iostream>
+#include <stdexcept>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 
 #include "common_socket.h"
 #include "server_accepter.h"
+
+using std::cout;
+using std::endl;
 
 Accepter::Accepter(string port, PTemperatures& tmpts) : tmpts(tmpts) {
     addrinfo hints;
@@ -17,17 +22,22 @@ Accepter::Accepter(string port, PTemperatures& tmpts) : tmpts(tmpts) {
     sv_skt->socket_bind(*res);
     sv_skt->socket_listen(10);
     freeaddrinfo(res);
-    }
+}
 
 void Accepter::run() {
     while (true) {
-        Socket* c_skt = sv_skt->socket_accept();
-        rcivrs.push(new Receiver(c_skt, tmpts));
-        rcivrs.back()->start();
+        try {
+            Socket* c_skt = sv_skt->socket_accept();
+            rcivrs.push(new Receiver(c_skt, tmpts));
+            rcivrs.back()->start();
+        }
+        catch (const std::runtime_error& e) {
+            break;
+        }
     }
 }
-// quizas tenga que overridear join
-Accepter::~Accepter() {
+
+void Accepter::join() {
     Receiver* rcivr;
     while (!rcivrs.empty()) {
         rcivr = rcivrs.front();
@@ -36,5 +46,7 @@ Accepter::~Accepter() {
         delete rcivr;
     }
     delete sv_skt;
-    //join();
+    Thread::join();
 }
+
+Accepter::~Accepter() {}

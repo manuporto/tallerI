@@ -22,9 +22,7 @@ void Server::run() {
     do {
         input = getchar();
     } while (input != 'q');
-    cout << "Sali" << endl;
-    //accptr.join();
-    cout << "Joinee" << endl;
+    accptr.join();
 }
 
 Server::~Server() {}

@@ -75,7 +75,6 @@ class LispArithmetic: public LispFunction {
             }
             return result;
         }
-
 };
 
 class LispAdd: public LispArithmetic {
@@ -121,18 +120,6 @@ class LispMul: public LispArithmetic {
             ss << result;
             return ss.str();
         }
-        /* 
-        virtual string run(const vector<string>& args, PContext& pctxt) {
-            int result = atoi(process_value(args[0], pctxt).c_str());
-            stringstream ss;
-
-            for (size_t i = 1; i < args.size(); ++i) {
-                result *= atoi(process_value(args[i], pctxt).c_str());
-            }
-
-            ss << result;
-            return ss.str();
-        }*/      
 };
 
 class LispDiv: public LispFunction {

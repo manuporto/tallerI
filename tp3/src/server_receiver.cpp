@@ -20,14 +20,17 @@ void Receiver::run() {
     stringstream ss;
     skt->socket_receive(msg);
     while (msg.compare("End") != 0) {
+        cout << msg << endl;
         ss << msg;
         ss >> day;
         ss >> city_temp;
         City city_tmpt = parse_value(city_temp);
         tmpts.set(day, city_tmpt);
         ss.clear();
+        msg.clear();
         skt->socket_receive(msg);
     }
+    cout << msg << endl;
 }
 
 City Receiver::parse_value(string value) {

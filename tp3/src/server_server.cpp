@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <netdb.h>
 #include <sstream>
+#include <vector>
 
 #include "common_socket.h"
 #include "server_accepter.h"
@@ -10,14 +11,23 @@
 #include "server_presults.h"
 #include "server_server.h"
 
+#define MAX_REDUCERS 4
+#define MARCH_DAYS 31
+
 using std::string;
 using std::stringstream;
+using std::vector;
 using std::cout;
 using std::endl;
 
-Server::Server(string port) : port(port) { PTemperatures tmpts; }
+Server::Server(string port) : port(port)
+{
+    PTemperatures tmpts;
+}
 
-void Server::run() {
+void Server::run()
+{
+    // Get data
     Accepter accptr(port, tmpts);
     accptr.start();
     char input;
@@ -26,27 +36,41 @@ void Server::run() {
     } while (input != 'q');
     accptr.join();
 
+    // Reduce
     PResults results;
     stringstream ss;
     string day;
     Cities cities;
-    for (size_t i = 1; i <= 4; ++i) {
-        ss << i;
-        day = ss.str();
-        if (tmpts.get_if_has_key(day, cities)) {
-            Reducer reducer(day, cities, results);
-            reducer.start();
-            reducer.join();
-        }
-        ss.str("");
-    }
-    
-    string res;
-    for (size_t i = 1; i <= 4; ++i) {
-        if (results.get_if_has_key((int) i, res)) {
-            cout << i << ": " << res << endl;
+    vector<Reducer*> reducers;
+    Reducer* reducer;
+    for (size_t i = 1; i <= MARCH_DAYS; ++i) {
+
+        for (size_t j = 0; j < MAX_REDUCERS && i <= MARCH_DAYS; ++j) {
+            ss << i;
+            day = ss.str();
+            if (tmpts.get_if_has_key(day, cities)) {
+                reducers.push_back(new Reducer(day, cities, results));
+                reducers.back()->start();
             }
+            ss.str("");
         }
+        while (!reducers.empty()) {
+            reducer = reducers.back();
+            reducers.pop_back();
+            reducer->join();
+            delete reducer;
+        }
+    }
+
+    // Print results
+    string res;
+    for (size_t i = 1; i <= MARCH_DAYS; ++i) {
+        if (results.get_if_has_key((int)i, res)) {
+            cout << i << ": " << res << endl;
+        }
+    }
 }
 
-Server::~Server() {}
+Server::~Server()
+{
+}

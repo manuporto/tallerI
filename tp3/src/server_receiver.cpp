@@ -16,17 +16,15 @@ Receiver::Receiver(Socket* skt, PTemperatures& tmpts)
     : skt(skt), tmpts(tmpts) {}
 
 void Receiver::run() {
-    string msg, key, value;
+    string msg, day, city_temp;
     stringstream ss;
     skt->socket_receive(msg);
     while (msg.compare("End") != 0) {
-        cout << msg << endl;
         ss << msg;
-        ss >> key;
-        ss >> value;
-        City city_tmpt = parse_value(value);
-        tmpts.set(key, city_tmpt);
-        cout << city_tmpt.first << " " << city_tmpt.second << endl;
+        ss >> day;
+        ss >> city_temp;
+        City city_tmpt = parse_value(city_temp);
+        tmpts.set(day, city_tmpt);
         ss.clear();
         skt->socket_receive(msg);
     }

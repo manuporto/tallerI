@@ -21,6 +21,7 @@ Client::Client(string hostname, string port)
     memset(&hints, 0, sizeof(addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = 0;
     getaddrinfo(hostname.c_str(), port.c_str(), &hints, &res);
     skt = new Socket(*res);
     skt->socket_connect(*res);
@@ -32,6 +33,7 @@ void Client::get_input()
 {
     string input;
     while (getline(cin, input)) {
+        cout << input << endl;
         process_input(input);
     }
     

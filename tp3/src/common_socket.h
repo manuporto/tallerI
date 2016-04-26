@@ -23,7 +23,6 @@ class Socket {
     ~Socket();
 
    private:
-    void process_message(void* buf, int size, int mode);
     int fd;
 };
 

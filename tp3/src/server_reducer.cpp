@@ -20,8 +20,8 @@ string Reducer::calculate_max_temp() {
     vector<string> max_cities;
     max_cities.push_back(cities[0].first);
     int max_temp = atoi(cities[0].second.c_str());
-    string s_max_temp = cities[0].second;
     int temp;
+    string s_max_temp = cities[0].second;
     string city;
     for (size_t i = 1; i < cities.size(); ++i) {
         city = cities[i].first;

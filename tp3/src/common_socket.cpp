@@ -12,7 +12,7 @@
 
 #include "common_socket.h"
 
-#define MAX_MSG_LEN 512
+#define MAX_MSG_LEN 1024
 
 using std::string;
 

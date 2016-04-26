@@ -10,13 +10,10 @@
 #include "common_socket.h"
 
 using std::cin;
-using std::cout;
-using std::endl;
 using std::string;
 using std::stringstream;
 
-Client::Client(string hostname, string port)
-{
+Client::Client(string hostname, string port) {
     addrinfo hints;
     memset(&hints, 0, sizeof(addrinfo));
     hints.ai_family = AF_INET;
@@ -29,36 +26,26 @@ Client::Client(string hostname, string port)
     get_input();
 }
 
-void Client::get_input()
-{
+void Client::get_input() {
     string input;
     while (getline(cin, input)) {
-        //cout << input << endl;
         process_input(input);
     }
-    
     string end = "End\n";
     size_t l = end.size();
     skt->socket_send(end, l);
 }
 
-void Client::process_input(string input)
-{
+void Client::process_input(string input) {
     stringstream ss(input);
     string data, key, value;
-    size_t size;
     ss >> data;
     value.append(data);
     ss >> data;
     value.append("-");
     value.append(data);
     ss >> key;
-    
     key += " " + value + "\n";
-    size = key.size();
-    skt->socket_send(key, size);
+    skt->socket_send(key, key.size());
 }
-Client::~Client()
-{
-    delete skt;
-}
+Client::~Client() { delete skt; }

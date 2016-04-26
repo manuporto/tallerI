@@ -4,6 +4,7 @@
 #include <string>
 
 #include "common_socket.h"
+#include "server_presults.h"
 #include "server_ptemperatures.h"
 
 using std::string;
@@ -15,8 +16,12 @@ class Server {
     ~Server();
 
 private:
+    void get_data();
+    void reduce();
+    void print_results();
     string port;
     PTemperatures tmpts;
+    PResults results;
 };
 
 #endif  // SERVER_H

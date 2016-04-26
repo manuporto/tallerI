@@ -21,10 +21,12 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-Server::Server(string port) : port(port) { PTemperatures tmpts; }
+Server::Server(string port) : port(port) {
+    PTemperatures tmpts;
+    PResults results;
+}
 
-void Server::run() {
-    // Get data
+void Server::get_data() {
     Accepter accptr(port, tmpts);
     accptr.start();
     char input;
@@ -32,9 +34,9 @@ void Server::run() {
         input = getchar();
     } while (input != 'q');
     accptr.join();
+}
 
-    // Reduce
-    PResults results;
+void Server::reduce() {
     stringstream ss;
     string day;
     Cities cities;
@@ -58,14 +60,21 @@ void Server::run() {
             delete reducer;
         }
     }
+}
 
-    // Print results
+void Server::print_results() {
     string res;
     for (size_t i = 1; i <= MARCH_DAYS; ++i) {
         if (results.get_if_has_key((int)i, res)) {
             cout << i << ": " << res << endl;
         }
     }
+}
+
+void Server::run() {
+    get_data();
+    reduce();
+    print_results();
 }
 
 Server::~Server() {}

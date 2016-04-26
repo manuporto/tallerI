@@ -2,12 +2,9 @@
 #include "server_ptemperatures.h"
 #include "server_receiver.h"
 
-#include <iostream>
 #include <sstream>
 #include <string>
 
-using std::cout;
-using std::endl;
 using std::make_pair;
 using std::string;
 using std::stringstream;
@@ -24,14 +21,11 @@ void Receiver::run() {
 }
 
 void Receiver::parse_message(string& msg) {
-    //cout << "Mensaje original: " << msg;
-    //cout << "--------" << endl;
     string sub_msg, day, city_temp;
     stringstream ss;
     size_t pos = msg.find('\n');
     while (pos != string::npos) {
         sub_msg = msg.substr(0, pos);
-        cout << sub_msg << endl;
         if (sub_msg.compare("End") == 0) {
             msg = sub_msg;
             return;
@@ -47,7 +41,6 @@ void Receiver::parse_message(string& msg) {
         msg = msg.substr(pos + 1);
         pos = msg.find('\n');
     }
-    //cout << "FIN RECV" << endl;
 }
 
 City Receiver::parse_value(string value) {

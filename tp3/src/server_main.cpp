@@ -1,9 +1,4 @@
-#include <iostream>
-
 #include "server_server.h"
-
-using std::cout;
-using std::endl;
 
 int main(int argc, char** argv) {
     if (argc != 2) {

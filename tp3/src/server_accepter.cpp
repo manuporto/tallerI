@@ -1,5 +1,4 @@
 #include <cstring>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <sys/types.h>
@@ -9,8 +8,6 @@
 #include "common_socket.h"
 #include "server_accepter.h"
 
-using std::cout;
-using std::endl;
 using std::string;
 
 Accepter::Accepter(string port, PTemperatures& tmpts) : tmpts(tmpts) {

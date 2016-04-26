@@ -2,12 +2,9 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <iostream>
 #include <string>
 #include <vector>
 
-using std::cout;
-using std::endl;
 using std::string;
 using std::vector;
 
@@ -40,7 +37,6 @@ string Reducer::calculate_max_temp() {
     }
     string res = sort_cities(max_cities);
     res += string(" (") + s_max_temp + string(")");
-    //cout << "REDUCER: " << day << res << endl;
     return res;
 }
 

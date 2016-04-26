@@ -130,36 +130,26 @@ void Socket::socket_send(string& msg, size_t size) {
 
 void Socket::socket_receive(string& msg) {
     size_t size = MAX_MSG_LEN;
-    //size_t pos;
+    size_t pos;
     size_t processed = 0;
     char buf[MAX_MSG_LEN];
-    char* end_pos_ptr;
     memset(buf, '\0', MAX_MSG_LEN);
-    int status, end_pos;
-    //string partial_msg;
+    int status = 0;
+    string partial_msg;
     while (processed < size) {
-        // pos = pos + processed;
         status = recv(fd, &buf[processed], size - processed, 0);
         if (status <= 0) {
             throw std::runtime_error("Error while attempting to receive data.");
         } else {
             // In case of no error status represents the bytes sent/received
             processed += status;
-            end_pos_ptr = strrchr(buf, '\n');
-            if (end_pos_ptr) {
-                end_pos = end_pos_ptr - buf + 1;
-                msg.assign(buf, end_pos);
-                //cout << msg;
-                break;
-            }
-            /*partial_msg = string(buf);
+            partial_msg = string(buf, MAX_MSG_LEN);
             pos = partial_msg.find_last_of('\n');
             if (pos != string::npos) {
                 msg = partial_msg.substr(0, pos);
                 msg += "\n";
-                //cout << msg;
                 break;
-            }*/
+            }
         }
     }
     /*msg = "";

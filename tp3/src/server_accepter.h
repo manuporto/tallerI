@@ -29,7 +29,6 @@ class Accepter : public Thread {
     addrinfo* res;
     PTemperatures& tmpts;
     Receivers rcivrs;
-    
 };
 
 #endif  // ACCEPTER_H

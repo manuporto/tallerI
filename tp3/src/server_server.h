@@ -10,7 +10,7 @@ using std::string;
 
 class Server {
    public:
-    Server(string port);
+    explicit Server(string port);
     void run();
     ~Server();
 

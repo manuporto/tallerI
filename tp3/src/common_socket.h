@@ -12,8 +12,8 @@ typedef struct addrinfo addrinfo;
 
 class Socket {
    public:
-    Socket(addrinfo& res);
-	Socket(int fd);
+    explicit Socket(addrinfo& res);
+	explicit Socket(int fd);
     void socket_bind(addrinfo& res);
     void socket_connect(addrinfo& res);
     void socket_listen(int backlog);

@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <netdb.h>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include "common_socket.h"
@@ -20,13 +21,9 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-Server::Server(string port) : port(port)
-{
-    PTemperatures tmpts;
-}
+Server::Server(string port) : port(port) { PTemperatures tmpts; }
 
-void Server::run()
-{
+void Server::run() {
     // Get data
     Accepter accptr(port, tmpts);
     accptr.start();
@@ -43,8 +40,7 @@ void Server::run()
     Cities cities;
     vector<Reducer*> reducers;
     Reducer* reducer;
-    for (size_t i = 1; i <= MARCH_DAYS; ++i) {
-
+    for (size_t i = 1; i <= MARCH_DAYS;) {
         for (size_t j = 0; j < MAX_REDUCERS && i <= MARCH_DAYS; ++j) {
             ss << i;
             day = ss.str();
@@ -53,6 +49,7 @@ void Server::run()
                 reducers.back()->start();
             }
             ss.str("");
+            ++i;
         }
         while (!reducers.empty()) {
             reducer = reducers.back();
@@ -71,6 +68,4 @@ void Server::run()
     }
 }
 
-Server::~Server()
-{
-}
+Server::~Server() {}

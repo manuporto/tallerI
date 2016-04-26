@@ -13,53 +13,47 @@
 
 #include "common_socket.h"
 
-#define MAX_MSG_LEN 256
+#define MAX_MSG_LEN 64
 
 using std::cout;
 using std::endl;
 using std::vector;
 
-Socket::Socket(addrinfo& res)
-{
+Socket::Socket(addrinfo& res) {
     fd = socket(res.ai_family, res.ai_socktype, res.ai_protocol);
     if (fd == -1) {
         fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-Socket::Socket(int fd) : fd(fd)
-{
-}
+Socket::Socket(int fd) : fd(fd) {}
 
-void Socket::socket_bind(addrinfo& res)
-{
+void Socket::socket_bind(addrinfo& res) {
     int status = bind(fd, res.ai_addr, res.ai_addrlen);
     if (status == -1) {
         fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-void Socket::socket_connect(addrinfo& res)
-{
+void Socket::socket_connect(addrinfo& res) {
     int status = connect(fd, res.ai_addr, res.ai_addrlen);
     if (status == -1) {
         fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-void Socket::socket_listen(int backlog)
-{
+void Socket::socket_listen(int backlog) {
     int status = listen(fd, backlog);
     if (status == -1) {
         fprintf(stderr, "Error: %s\n", strerror(errno));
     }
 }
 
-Socket* Socket::socket_accept()
-{
+Socket* Socket::socket_accept() {
     int tempskt = accept(fd, NULL, NULL);
     if (tempskt == -1) {
-        throw std::runtime_error("Error while attempting to accept a new connection.");
+        throw std::runtime_error(
+            "Error while attempting to accept a new connection.");
     }
     return new Socket(tempskt);
 }
@@ -101,8 +95,7 @@ void Socket::process_message(void* buf, int size, int mode) {
     }
 }
 */
-void Socket::socket_send(string& msg, size_t size)
-{
+void Socket::socket_send(string& msg, size_t size) {
     const char* buf = msg.c_str();
     int status;
     size_t processed = 0;
@@ -135,14 +128,15 @@ void Socket::socket_send(string& msg, size_t size)
     }*/
 }
 
-void Socket::socket_receive(string& msg)
-{
+void Socket::socket_receive(string& msg) {
     size_t size = MAX_MSG_LEN;
-    size_t pos;
-    char buf[MAX_MSG_LEN];
-    int status;
+    //size_t pos;
     size_t processed = 0;
-    string partial_msg;
+    char buf[MAX_MSG_LEN];
+    char* end_pos_ptr;
+    memset(buf, '\0', MAX_MSG_LEN);
+    int status, end_pos;
+    //string partial_msg;
     while (processed < size) {
         // pos = pos + processed;
         status = recv(fd, &buf[processed], size - processed, 0);
@@ -151,13 +145,21 @@ void Socket::socket_receive(string& msg)
         } else {
             // In case of no error status represents the bytes sent/received
             processed += status;
-            partial_msg = string(buf);
-            pos = partial_msg.find('\n');
+            end_pos_ptr = strrchr(buf, '\n');
+            if (end_pos_ptr) {
+                end_pos = end_pos_ptr - buf + 1;
+                msg.assign(buf, end_pos);
+                //cout << msg;
+                break;
+            }
+            /*partial_msg = string(buf);
+            pos = partial_msg.find_last_of('\n');
             if (pos != string::npos) {
                 msg = partial_msg.substr(0, pos);
-                //cout << msg << endl;
+                msg += "\n";
+                //cout << msg;
                 break;
-                }
+            }*/
         }
     }
     /*msg = "";
@@ -169,7 +171,8 @@ void Socket::socket_receive(string& msg)
     size_t processed = 0;
 
     while (processed < MAX_MSG_LEN) {
-        status = recv(fd, &buffer[processed], MAX_MSG_LEN - processed, MSG_NOSIGNAL);
+        status = recv(fd, &buffer[processed], MAX_MSG_LEN - processed,
+    MSG_NOSIGNAL);
         if (status < 0) {
             throw std::runtime_error("Error while attempting to receive data.");
         } else {
@@ -187,8 +190,7 @@ void Socket::socket_receive(string& msg)
     }*/
 }
 
-Socket::~Socket()
-{
+Socket::~Socket() {
     shutdown(fd, SHUT_RDWR);
     close(fd);
 }

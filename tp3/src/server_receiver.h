@@ -12,6 +12,7 @@ public:
     virtual void run();
     ~Receiver();
 private:
+    void parse_message(string& msg);
     City parse_value(string value);
     Socket* skt;
     PTemperatures& tmpts;

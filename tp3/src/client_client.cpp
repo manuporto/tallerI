@@ -33,7 +33,7 @@ void Client::get_input()
 {
     string input;
     while (getline(cin, input)) {
-        cout << input << endl;
+        //cout << input << endl;
         process_input(input);
     }
     

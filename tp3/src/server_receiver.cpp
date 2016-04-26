@@ -16,21 +16,46 @@ Receiver::Receiver(Socket* skt, PTemperatures& tmpts)
     : skt(skt), tmpts(tmpts) {}
 
 void Receiver::run() {
-    string msg, day, city_temp;
+    string msg = "";
+    /*string day, city_temp;
     stringstream ss;
-    skt->socket_receive(msg);
+    skt->socket_receive(msg);*/
     while (msg.compare("End") != 0) {
-        cout << msg << endl;
+        /*cout << msg << endl;
         ss << msg;
         ss >> day;
         ss >> city_temp;
         City city_tmpt = parse_value(city_temp);
         tmpts.set(day, city_tmpt);
         ss.clear();
-        msg.clear();
+        msg.clear();*/
         skt->socket_receive(msg);
+        parse_message(msg);
     }
-    cout << msg << endl;
+    //cout << msg << endl;
+}
+
+void Receiver::parse_message(string& msg) {
+    string sub_msg, day, city_temp;
+    stringstream ss;
+    size_t pos = msg.find('\n');
+    while (pos != string::npos) {
+        sub_msg = msg.substr(0, pos);
+        //cout << sub_msg << endl;
+        if (sub_msg.compare("End") == 0) {
+            msg = sub_msg;
+            return;
+        }
+        ss << sub_msg;
+        ss >> day;
+        ss >> city_temp;
+        City city_tmpt = parse_value(city_temp);
+        tmpts.set(day, city_tmpt);
+        ss.clear();
+        sub_msg.clear();
+        msg = msg.substr(pos + 1);
+        pos = msg.find('\n');
+    }
 }
 
 City Receiver::parse_value(string value) {

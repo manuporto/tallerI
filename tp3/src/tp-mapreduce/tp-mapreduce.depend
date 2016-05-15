@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1460852869 source:/home/montag/Documents/tallerI/tp3/src/main.cpp
+	<iostream>
+	"client.h"
+
+1460850849 /home/montag/Documents/tallerI/tp3/src/client.h
+

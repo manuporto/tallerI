@@ -1,0 +1,9 @@
+[{
+  "directory": "/home/montag/Documents/tallerI/tp3/src/tp3_mapreduce/mapreduce",
+  "command": "g++ -O2 -Wall -DNDEBUG -I. -I. -MG -MP -MT./Release/src_client.cpp.o -MF./Release/src_client.cpp.o.d -MM ../../client.cpp",
+  "file": "/home/montag/Documents/tallerI/tp3/src/client.cpp"
+ }, {
+  "directory": "/home/montag/Documents/tallerI/tp3/src/tp3_mapreduce/mapreduce",
+  "command": "g++ -c /home/montag/Documents/tallerI/tp3/src/client.cpp -O2 -Wall -DNDEBUG -o ./Release/src_client.cpp.o -I. -I.",
+  "file": "/home/montag/Documents/tallerI/tp3/src/client.cpp"
+ }]

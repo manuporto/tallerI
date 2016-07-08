@@ -3,8 +3,7 @@
 #include <string.h>
 
 int val(char c) {
-    printf("%c\n", c);
-    if (c >= 0 && c <= 9) {
+    if (c >= '0' && c <= '9') {
         return (int)c - '0';
     }
     return (int)c - 'A' + 10;
@@ -12,7 +11,7 @@ int val(char c) {
 
 int main(int argc, char *argv[]) {
     int base = atoi(argv[2]);
-    printf("Number is %s and it's base is %d\n", argv[1], base);
+    printf("El numero es %s y su base es %d\n", argv[1], base);
     int len = strlen(argv[1]);
     int power = 1;
     int num = 0;
@@ -21,5 +20,5 @@ int main(int argc, char *argv[]) {
         num += val(argv[1][i]) * power;
         power *= base;
     }
-    printf("Number in decimal base: %d\n", num);
+    printf("El numero en base decimal es: %d\n", num);
 }

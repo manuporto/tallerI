@@ -40,14 +40,17 @@ class Triangulo : public Gtk::DrawingArea {
             int xc = ancho / 2;
             int yc = alto/2;
 
+            cr->save();
             cr->set_line_width(10.0);
             cr->set_source_rgba(0, 0, 1.0, 1);
-            cr->move_to(0,0);
-            cr->line_to(xc, yc);
-            cr->line_to(0, alto);
+            cr->move_to(xc,yc);
+            cr->line_to(xc+50, yc+50);
+            cr->line_to(xc, yc+50);
             //cr->move_to(xc, yc);
             //cr->line_to(ancho, yc);
             cr->close_path();
+            cr->fill_preserve();
+            cr->restore();
             cr->stroke();
             return true;
         }

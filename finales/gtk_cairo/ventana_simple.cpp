@@ -1,7 +1,7 @@
 #include <gtkmm/application.h>
 #include <gtkmm/button.h>
 #include <gtkmm/window.h>
-
+#include <gtkmm/comboboxtext.h>
 #include <iostream>
 
 class Ventana : public Gtk::Window {
@@ -25,9 +25,32 @@ class Ventana : public Gtk::Window {
         }
 };
 
+class VentanaLBox : public Gtk::Window {
+     protected:
+        Gtk::ComboBoxText cbox;
+
+    public:
+        VentanaLBox() {
+            Glib::ustring str = "Linea ";
+            std::stringstream ss;
+            for (int i = 1; i <= 10; ++i) {
+                ss << i;
+                cbox.append(str + ss.str());
+                ss.str(""); 
+            }
+            cbox.append("Linea 1");
+            add(cbox);
+            show_all();
+        }
+
+        ~VentanaLBox() {
+            std::cout << "Se cierra ordenadamente" << std::endl;
+        }   
+};
+
 int main(int argc, char *argv[]) {
     Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv);
-    Ventana ventana;
+    VentanaLBox ventana;
     ventana.set_title("Ejemplo");
     return app->run(ventana);
 }
